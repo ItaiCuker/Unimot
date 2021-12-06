@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">unimot</string>
+    <string name="app_name">Unimot</string>
+    <string name="register">register</string>
+    <string name="password">Password</string>
+    <string name="sign_in">sign in</string>
+    <string name="username">Username</string>
+    <string name="continue_with_google">continue with google</string>
+    <string name="continue_with_facebook">continue with facebook</string>
+    <string name="confirm_email">confirm email</string>
+    <string name="sign_up">Sign up</string>
+    <string name="email">email</string>
+    <string name="create_a_new_nunimot_account">Create a new \nUnimot account</string>
+    <string name="register_my_account">register my account</string>
+    <string name="or">OR</string>
 </resources>

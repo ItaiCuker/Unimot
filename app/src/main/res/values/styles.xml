@@ -37,5 +37,16 @@
     <style name="Widget.Unimot.NavigationView" parent="Widget.MaterialComponents.NavigationView">
         <item name="itemTextAppearance">?attr/textAppearanceBody2</item>
     </style>
+    
+    <!--Text Field-->
+    <style name="Widget.Unimot.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.Unimot.TextInputLayout</item>
+        <item name="boxBackgroundColor">@color/secondary</item>
+        <item name="android:textColor"></item>
+    </style>
+
+    <style name="ThemeOverlay.Unimot.TextInputLayout" parent="">
+        <item name="editTextStyle">@style/Widget.MaterialComponents.TextInputLayout.FilledBox</item>
+    </style>
 
 </resources>

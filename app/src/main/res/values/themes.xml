@@ -64,6 +64,7 @@
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Unimot.BottomSheetDialog</item>
         <item name="navigationViewStyle">@style/Widget.Unimot.NavigationView</item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>
+        <item name="textInputStyle">@style/Widget.Unimot.TextInputLayout</item>
     </style>
     <style name="Base.Theme.Unimot" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:statusBarColor" tools:ignore="NewApi">?attr/colorSurface</item>
