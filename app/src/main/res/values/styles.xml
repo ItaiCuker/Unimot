@@ -39,14 +39,12 @@
     </style>
     
     <!--Text Field-->
-    <style name="Widget.Unimot.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+    <style name="Widget.Unimot.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="materialThemeOverlay">@style/ThemeOverlay.Unimot.TextInputLayout</item>
-        <item name="boxBackgroundColor">@color/secondary</item>
-        <item name="android:textColor"></item>
     </style>
 
     <style name="ThemeOverlay.Unimot.TextInputLayout" parent="">
-        <item name="editTextStyle">@style/Widget.MaterialComponents.TextInputLayout.FilledBox</item>
+        <item name="editTextStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
     </style>
 
 </resources>

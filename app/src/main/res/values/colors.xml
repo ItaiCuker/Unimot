@@ -47,8 +47,8 @@
     <color name="primaryVariantDark">#5F35B1</color> <!--Color primary variant (dark)-->
     <color name="primaryVariantLight">#522DA8</color> <!--Color primary variant (light)-->
 
-    <color name="secondary">#47FFBF</color> <!--Color secondary-->
-    <color name="secondaryVariant">#00ED81</color> <!--Color secondary variant-->
+    <color name="secondary">#7CD4FF</color> <!--Color secondary-->
+    <color name="secondaryVariant">#00A8FD</color> <!--Color secondary variant-->
 
     <color name="errorDark">#cf6679</color> <!--Color error (dark)-->
     <color name="errorLight">#b00020</color> <!--Color error (light)-->
@@ -57,7 +57,7 @@
     <!--color on surface (dark), color on surface (dark)-->
     <color name="white_50">#ffffff</color>
 
-    <color name="black_800">#121212</color> <!--Color surface (dark)-->
+    <color name="black_800">#212121</color> <!--Color surface (dark)-->
     <!--Color on secondary (light), color on background (light),-->
     <!--color on surface (light)-->
     <color name="black_900">#000000</color>
