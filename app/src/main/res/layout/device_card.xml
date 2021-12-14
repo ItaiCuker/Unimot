@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable name="device" type="String" />
 
     </data>
 
@@ -23,11 +24,12 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_baseline_ac_unit_24"
+                app:srcCompat="@drawable/device_ac"
                 app:tint="@color/material_on_background_emphasis_high_type" />
 
             <TextView
                 android:id="@+id/tvDeviceName"
+                android:text="@{device}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
