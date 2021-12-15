@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable name="device" type="String" />
-
+        <variable name="deviceType" type="String" />
+        <variable name="favorite" type="Boolean" /> <!--   is favorite     -->
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -21,43 +21,33 @@
                 android:id="@+id/ivDeviceIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/device_ac"
-                app:tint="@color/material_on_background_emphasis_high_type" />
+                app:srcCompat="@drawable/device_ac" />
 
             <TextView
                 android:id="@+id/tvDeviceName"
-                android:text="@{device}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:text="@{deviceType}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ivDeviceIcon"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="1dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="16dp"
-                android:background="?android:attr/listDivider"
-                app:layout_constraintStart_toEndOf="@id/tvDeviceName"
-                tools:layout_constraintBottom_toBottomOf="@id/tvDeviceName"
-                tools:layout_constraintStart_toEndOf="@id/tvDeviceName"
-                tools:layout_constraintTop_toTopOf="@id/tvDeviceName"
-                tools:layout_editor_absoluteY="4dp" />
-
-            <ImageView
-                android:id="@+id/ivFavoriteIcon"
+            <CheckBox
+                android:id="@+id/checkBox2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="2dp"
-                app:layout_constraintStart_toEndOf="@id/divider2"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_baseline_favorite_border_24"
-                app:tint="@color/material_on_background_emphasis_medium" />
+                android:layout_marginStart="8dp"
+                android:button="@drawable/btn_favorite"
+                app:layout_constraintStart_toEndOf="@id/tvDeviceName"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
