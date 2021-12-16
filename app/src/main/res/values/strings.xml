@@ -13,4 +13,5 @@
     <string name="create_a_new_nunimot_account">Create a new \nUnimot account</string>
     <string name="register_my_account">register my account</string>
     <string name="or">OR</string>
+    <string name="deviceIcon">device type</string>
 </resources>

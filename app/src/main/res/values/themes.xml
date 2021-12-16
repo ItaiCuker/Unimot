@@ -57,9 +57,6 @@
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Unimot.LargeComponent</item>
         <!--Component styles-->
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialComponents.Dialog.Alert</item>
-        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Unimot.BottomSheetDialog</item>
-        <item name="navigationViewStyle">@style/Widget.Unimot.NavigationView</item>
-        <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>
         <item name="textInputStyle">@style/Widget.Unimot.TextInputLayout</item>
     </style>
     <style name="Base.Theme.Unimot" parent="Theme.MaterialComponents.DayNight.NoActionBar">
