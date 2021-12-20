@@ -21,7 +21,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@{viewmodel.deviceType}"
+                app:srcCompat="@drawable/device_ac"
                 android:contentDescription="@string/deviceIcon" />
 
             <TextView
@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
-                android:text="@={viewmodel.deviceName}"
+                android:text=""
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ivDeviceIcon"
@@ -40,13 +40,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
-                android:checked="@={viewmodel.favorite}"
                 android:button="@drawable/btn_favorite"
-                app:useMaterialThemeColors="false"
+                android:checked="true"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
                 app:layout_constraintStart_toEndOf="@id/tvDeviceName"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:useMaterialThemeColors="false" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
