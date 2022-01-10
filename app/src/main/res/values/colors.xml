@@ -62,4 +62,7 @@
     <!--color on surface (light)-->
     <color name="black_900">#000000</color>
 
+    <!--Color outline-->
+    <color name="outline">#f0efef</color>
+
 </resources>

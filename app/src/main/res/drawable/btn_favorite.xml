@@ -3,13 +3,13 @@
 
 <!--  focused  -->
     <item android:state_checked="true" android:state_focused="true"
-        android:drawable="@drawable/ic_baseline_favorite_24"/>
+        android:drawable="@drawable/ic_baseline_favorite"/>
     <item android:state_checked="false" android:state_focused="true"
-        android:drawable="@drawable/ic_baseline_favorite_border_24"/>
+        android:drawable="@drawable/ic_baseline_favorite_border"/>
 
 <!--  unfocused  -->
     <item android:state_checked="false"
-        android:drawable="@drawable/ic_baseline_favorite_border_24"/>
+        android:drawable="@drawable/ic_baseline_favorite_border"/>
     <item android:state_checked="true"
-        android:drawable="@drawable/ic_baseline_favorite_24"/>
+        android:drawable="@drawable/ic_baseline_favorite"/>
 </selector>
