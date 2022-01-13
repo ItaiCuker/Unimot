@@ -5,7 +5,6 @@ import com.itaicuker.unimot.R;
 
 /**
  * Enumeration of {@link Device} types.
- * User can add types to enum.
  */
 public enum DeviceType {
     AC(R.drawable.device_ac),
@@ -13,6 +12,9 @@ public enum DeviceType {
     TV(R.drawable.device_tv),
     PROJECTOR(R.drawable.device_projector);
 
+    /**
+     * the resource of icon
+     */
     private final int icon;
 
     /**
@@ -23,6 +25,9 @@ public enum DeviceType {
         this.icon = icon;
     }
 
+    /**
+     * @return resource id of icon
+     */
     public int getIcon() {
         return icon;
     }

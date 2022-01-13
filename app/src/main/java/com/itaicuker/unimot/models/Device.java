@@ -5,8 +5,11 @@ package com.itaicuker.unimot.models;
  * represents a device
  */
 public class Device {
+    /**
+     *
+     */
+    private final int id;
     private String name;
-    private int id;
     private DeviceType type;
     private boolean isFavorite;
 
@@ -27,10 +30,6 @@ public class Device {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public DeviceType getType() {
