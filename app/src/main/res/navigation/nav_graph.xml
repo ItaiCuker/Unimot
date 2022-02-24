@@ -2,4 +2,20 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph" />
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+    <fragment
+        android:id="@+id/provisionFragment"
+        android:name="com.itaicuker.unimot.fragments.ProvisionFragment"
+        android:label="fragment_provision"
+        tools:layout="@layout/fragment_provision" />
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.itaicuker.unimot.fragments.mainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_provisionFragment"
+            app:destination="@id/provisionFragment" />
+    </fragment>
+</navigation>
