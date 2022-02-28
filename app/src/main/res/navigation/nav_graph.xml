@@ -7,12 +7,12 @@
     <fragment
         android:id="@+id/provisionFragment"
         android:name="com.itaicuker.unimot.fragments.ProvisionFragment"
-        android:label="fragment_provision"
+        android:label="provision a remote"
         tools:layout="@layout/fragment_provision" />
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.itaicuker.unimot.fragments.mainFragment"
-        android:label="fragment_main"
+        android:label="Unimot"
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_provisionFragment"

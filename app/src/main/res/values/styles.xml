@@ -14,7 +14,7 @@
 ~ limitations under the License.
 -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <!--Components-->
 
@@ -29,23 +29,6 @@
 
     <style name="Widget.Unimot.TextInputEditText.OutLinedBox" parent="Widget.MaterialComponents.TextInputEditText.OutlinedBox">
         <item name="android:textColor">@color/black_800</item>
-    </style>
-
-    <!--toolbar -->
-
-    <style name="Theme.Unimot" parent="Theme.MaterialComponents.NoActionBar">
-        ...
-        <item name="toolbarStyle">@style/Widget.Unimot.Toolbar</item>
-    </style>
-
-    <style name="Widget.Unimot.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="materialThemeOverlay">@style/ThemeOverlay.Unimot.Toolbar</item>
-        <item name="titleTextAppearance">@style/TextAppearance.Unimot.Headline6</item>
-        <item name="subtitleTextAppearance">@style/TextAppearance.Unimot.Subtitle1</item>
-    </style>
-
-    <style name="ThemeOverlay.Unimot.Toolbar" parent="">
-        <item name="theme">@style/Theme.MyApp</item>
     </style>
 
 </resources>
