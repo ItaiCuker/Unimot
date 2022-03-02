@@ -5,11 +5,6 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/mainFragment">
     <fragment
-        android:id="@+id/provisionFragment"
-        android:name="com.itaicuker.unimot.fragments.ProvisionFragment"
-        android:label="provision a remote"
-        tools:layout="@layout/fragment_provision" />
-    <fragment
         android:id="@+id/mainFragment"
         android:name="com.itaicuker.unimot.fragments.mainFragment"
         android:label="Unimot"
@@ -17,5 +12,11 @@
         <action
             android:id="@+id/action_mainFragment_to_provisionFragment"
             app:destination="@id/provisionFragment" />
+
+    <fragment
+        android:id="@+id/provisionFragment"
+        android:name="com.itaicuker.unimot.fragments.ProvisionFragment"
+        android:label="provision a remote"
+        tools:layout="@layout/fragment_provision" />
     </fragment>
 </navigation>
