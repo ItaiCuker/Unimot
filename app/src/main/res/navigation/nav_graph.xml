@@ -25,6 +25,6 @@
     </fragment>
     <dialog
         android:id="@+id/provisionWifiDialogFragment"
-        android:name="com.itaicuker.unimot.ui.fragments.ProvisionWifiDialogFragment"
+        android:name="com.itaicuker.unimot.ui.fragments.WifiCredentialsDialogFragment"
         android:label="ProvisionWifiDialogFragment"/>
 </navigation>

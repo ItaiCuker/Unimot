@@ -34,7 +34,11 @@
     <string name="error_bluetooth_not_supported">Sorry! Bluetooth is not supported. try TODO</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="dialog_provision_wifi">insert wifi credentials</string>
+    <string name="dialog_provision_wifi">Insert wifi credentials</string>
     <string name="provision_new_remote">Provision new remote</string>
     <string name="cancel">Cancel</string>
+    <string name="error_no_remote_found">No Unimot remotes found</string>
+    <string name="permmision_location_request">Please give location permission to connect device</string>
+    <string name="error_title">Error!</string>
+    <string name="btn_ok">OK</string>
 </resources>

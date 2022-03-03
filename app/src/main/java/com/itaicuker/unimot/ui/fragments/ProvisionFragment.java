@@ -1,15 +1,16 @@
 package com.itaicuker.unimot.ui.fragments;
 
-import static android.app.Activity.RESULT_OK;
-
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -27,19 +28,16 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleEventObserver;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.MutableLiveData;
-import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.espressif.provisioning.DeviceConnectionEvent;
 import com.espressif.provisioning.ESPConstants;
 import com.espressif.provisioning.ESPProvisionManager;
+import com.espressif.provisioning.listeners.BleScanListener;
 import com.itaicuker.unimot.R;
 import com.itaicuker.unimot.databinding.FragmentProvisionBinding;
 import com.itaicuker.unimot.ui.adapters.BleRemoteListAdapter;
@@ -56,17 +54,17 @@ import java.util.HashMap;
 public class ProvisionFragment extends Fragment {
 
     private final String TAG = "ProvisionLandingFragment";
-    
-    //ui
+
+    //ui declarations
     private NavController navController;
     private FragmentProvisionBinding binding;
 
     private Button btnScan;
-    private ListView listRemotes;
+    private ListView lvRemotes;
     private ProgressBar progressBar;
 
     //prefix to filter BLE devices to only unimot
-    private final String Prefix = "UNIMOT_";
+    private final String prefix = "UNIMOT_";
 
     // Request codes
     private static final int REQUEST_ENABLE_BT = 1;
@@ -76,26 +74,19 @@ public class ProvisionFragment extends Fragment {
 
     private BleRemoteListAdapter adapter;
     private ArrayList<Remote> remoteList;
+    private int position;
     private Handler handler;
-    private HashMap<BluetoothDevice, String> bluetoothRemotes;
+    private HashMap<BluetoothDevice, String> bluetoothDevices;
 
-    private boolean isDeviceConnected = false, isConnecting = false;
+    private boolean isRemoteConnected = false, isConnecting = false, isScanning = false;
 
     private ESPProvisionManager provisionManager;
 
-    private boolean isScanning = false;
-    private boolean isRemoteConnected;
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //using binding instead of findviewbyid
         binding = FragmentProvisionBinding.inflate(inflater, container, false);
         setHasOptionsMenu(true);    //line to override options menu.
-//        requireActivity().getOnBackPressedDispatcher().addCallback(() ->
-//        {
-//
-//        });
         return binding.getRoot();
     }
 
@@ -106,99 +97,68 @@ public class ProvisionFragment extends Fragment {
         //getting navController
         navController = Navigation.findNavController(view);
 
-        // Checks if Bluetooth LE is supported on the device.
+        // Checks if Bluetooth LE is supported on this device.
         if (!requireActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(requireActivity(), R.string.error_ble_not_supported, Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), R.string.error_ble_not_supported, Toast.LENGTH_LONG).show();
             navController.navigateUp();
         }
-        
-        final BluetoothManager bluetoothManager = (BluetoothManager) requireActivity().getSystemService(Context.BLUETOOTH_SERVICE);
+
+        final BluetoothManager bluetoothManager = (BluetoothManager) getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
         bleAdapter = bluetoothManager.getAdapter();
 
-        // Checks if Bluetooth is supported on the device.
+        // Checks if Bluetooth is supported on this device.
         if (bleAdapter == null) {
-            Toast.makeText(requireActivity(), R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();
             navController.navigateUp();
         }
 
         isConnecting = false;
         isRemoteConnected = false;
         handler = new Handler();
-        bluetoothRemotes = new HashMap<>();
+        bluetoothDevices = new HashMap<>();
         remoteList = new ArrayList<>();
 
-        provisionManager = ESPProvisionManager.getInstance(requireActivity().getApplicationContext());
+        provisionManager = ESPProvisionManager.getInstance(getActivity().getApplicationContext());
 
         initViews();
 
         EventBus.getDefault().register(this);
+    }
 
-        final NavBackStackEntry dialogWifiEntry = navController.getBackStackEntry(R.id.action_provisionFragment_to_provisionWifiDialogFragment);
+    private void initViews() {
+        btnScan = binding.btnScan;
+        btnScan.setOnClickListener(btnScanClickListener);
 
-        // Create our observer and add it to the NavBackStackEntry's lifecycle
-        final LifecycleEventObserver observer = new LifecycleEventObserver() {
-            @Override
-            public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
-                if (event.equals(Lifecycle.Event.ON_DESTROY)
-                        && dialogWifiEntry.getSavedStateHandle().contains("SSID")) {
-                    String result = dialogWifiEntry.getSavedStateHandle().get("key");
-                    // Do something with the result
-                }
+        lvRemotes = binding.listRemotes;
+        progressBar = binding.progressBar;
+
+        adapter = new BleRemoteListAdapter(getContext(), R.layout.item_ble_scan, remoteList);
+
+        lvRemotes.setAdapter(adapter);
+        lvRemotes.setOnItemClickListener(onRemoteCLickListener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Ensures Bluetooth is enabled on this device.  If Bluetooth is not currently enabled,
+        // fire an intent to display a dialog asking the user to grant permission to enable it.
+        if (!bleAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        } else {
+
+            if (!isRemoteConnected && !isConnecting) {
+                startScan();
             }
-        };
-        dialogWifiEntry.getLifecycle().addObserver(observer);
-
-        // As addObserver() does not automatically remove the observer, we
-        // call removeObserver() manually when the view lifecycle is destroyed
-        getViewLifecycleOwner().getLifecycle().addObserver((LifecycleEventObserver) (source, event) -> {
-            if (event.equals(Lifecycle.Event.ON_DESTROY)) {
-                dialogWifiEntry.getLifecycle().removeObserver(this);
-            }
-        });
+        }
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.provision_menu, menu);  //changing menu
     }
-
-    private void initViews()
-    {
-        btnScan = binding.btnScan;
-        listRemotes = binding.listRemotes;
-        progressBar = binding.progressBar;
-
-        adapter = new BleRemoteListAdapter(getContext(), R.layout.item_ble_scan, remoteList);
-
-        listRemotes.setAdapter(adapter);
-        listRemotes.setOnItemClickListener(onRemoteCLickListener);
-    }
-
-    private AdapterView.OnItemClickListener onRemoteCLickListener = new AdapterView.OnItemClickListener() {
-
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
-            stopScan();
-            isConnecting = true;
-            isDeviceConnected = false;
-            btnScan.setVisibility(View.GONE);
-            listRemotes.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
-            BLEProvisionLanding.this.position = position;
-            Remote remote = adapter.getItem(position);
-            String uuid = bluetoothRemotes.get(remote.getBluetoothDevice());
-            Log.d(TAG, "=================== Connect to device : " + remote.getName() + " UUID : " + uuid);
-
-            if (ActivityCompat.checkSelfPermission(BLEProvisionLanding.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                provisionManager.getEspDevice().connectBLEDevice(remote.getBluetoothDevice(), uuid);
-                handler.postDelayed(disconnectDeviceTask, DEVICE_CONNECT_TIMEOUT);
-            } else {
-                Log.e(TAG, "Not able to connect device as Location permission is not granted.");
-                Toast.makeText(BLEProvisionLanding.this, "Please give location permission to connect device", Toast.LENGTH_LONG).show();
-            }
-        }
-    };
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -217,23 +177,6 @@ public class ProvisionFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
-        // fire an intent to display a dialog asking the user to grant permission to enable it.
-        if (!bleAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        } else {
-
-            if (!isDeviceConnected && !isConnecting) {
-                startScan();
-            }
-        }
-    }
-
-    @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
@@ -246,13 +189,13 @@ public class ProvisionFragment extends Fragment {
         Log.d(TAG, "onActivityResult, requestCode : " + requestCode + ", resultCode : " + resultCode);
 
         // User chose not to enable Bluetooth.
-        if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
-            navController.navigateUp();
-            return;
-        }
-
-        if (requestCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK) {
-            startScan();
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(getActivity(), "Provisioning requires bluetooth", Toast.LENGTH_LONG).show();
+                navController.navigateUp();
+            }
+            if (requestCode == Activity.RESULT_OK)
+                startScan();
         }
     }
 
@@ -260,17 +203,16 @@ public class ProvisionFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode) {
-
-            case REQUEST_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startScan();
-                } else if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                    navController.navigateUp();
-                }
+        if (requestCode == REQUEST_FINE_LOCATION)
+        {
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                startScan();
+            else if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED)
+            {
+                Toast.makeText(getActivity(), "Provisioning requires location permission", Toast.LENGTH_LONG);
+                navController.navigateUp();
             }
-            break;
         }
     }
 
@@ -278,36 +220,48 @@ public class ProvisionFragment extends Fragment {
     public void onEvent(DeviceConnectionEvent event) {
 
         Log.d(TAG, "ON Device Prov Event RECEIVED : " + event.getEventType());
-        handler.removeCallbacks(disconnectRemoteTask);
-
         switch (event.getEventType()) {
 
             case ESPConstants.EVENT_DEVICE_CONNECTED:
                 Log.d(TAG, "Device Connected Event Received");
-                ArrayList<String> deviceCaps = provisionManager.getEspDevice().getDeviceCapabilities();
+                ArrayList<String> remoteCaps = provisionManager.getEspDevice().getDeviceCapabilities();
                 progressBar.setVisibility(View.GONE);
                 isConnecting = false;
-                isDeviceConnected = true;
-                MutableLiveData<String> liveData = navController.getCurrentBackStackEntry().getSavedStateHandle().getLiveData("EVENT")
+                isRemoteConnected = true;
+
+                //TODO: start WiFi credentials dialog and get result.
+
                 break;
 
             case ESPConstants.EVENT_DEVICE_DISCONNECTED:
 
                 progressBar.setVisibility(View.GONE);
                 isConnecting = false;
-                isDeviceConnected = false;
-                Toast.makeText(BLEProvisionLanding.this, "Device disconnected", Toast.LENGTH_LONG).show();
+                isRemoteConnected = false;
+                Toast.makeText(getContext(), "Remote disconnected", Toast.LENGTH_LONG).show();
                 break;
 
             case ESPConstants.EVENT_DEVICE_CONNECTION_FAILED:
                 progressBar.setVisibility(View.GONE);
                 isConnecting = false;
-                isDeviceConnected = false;
-                alertForDeviceNotSupported("Failed to connect with device");
+                isRemoteConnected = false;
+                alertForRemoteNotSupported("Failed to connect to remote");
                 break;
         }
     }
 
+    private final View.OnClickListener btnScanClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+
+            bluetoothDevices.clear();
+            adapter.clear();
+            startScan();
+        }
+    };
+
+    @SuppressLint("MissingPermission")
     private void startScan() {
 
         if (!hasPermissions() || isScanning) {
@@ -315,16 +269,190 @@ public class ProvisionFragment extends Fragment {
         }
 
         isScanning = true;
-        deviceList.clear();
+        remoteList.clear();
         bluetoothDevices.clear();
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            provisionManager.searchBleEspDevices(deviceNamePrefix, bleScanListener);
+        if (hasLocationPermissions()) {
+
+            provisionManager.searchBleEspDevices(prefix, bleScanListener);
             updateProgressAndScanBtn();
         } else {
             Log.e(TAG, "Not able to start scan as Location permission is not granted.");
-            Toast.makeText(BLEProvisionLanding.this, "Please give location permission to start BLE scan", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Please give location permission to start BLE scan", Toast.LENGTH_LONG).show();
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private void stopScan() {
+
+        isScanning = false;
+
+        if (hasLocationPermissions()) {
+            provisionManager.stopBleScan();
+            updateProgressAndScanBtn();
+        } else {
+            Log.e(TAG, "Not able to stop scan as Location permission is not granted.");
+            Toast.makeText(getActivity(), "Please give location permission to stop BLE scan", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * This method will update UI (Scan button enable / disable and progressbar visibility)
+     */
+    private void updateProgressAndScanBtn() {
+
+        if (isScanning) {
+
+            btnScan.setEnabled(false);
+            btnScan.setAlpha(0.5f);
+            btnScan.setTextColor(Color.WHITE);
+            progressBar.setVisibility(View.VISIBLE);
+            lvRemotes.setVisibility(View.GONE);
+
+        } else {
+
+            btnScan.setEnabled(true);
+            btnScan.setAlpha(1f);
+            progressBar.setVisibility(View.GONE);
+            lvRemotes.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * alert dialog that shows error and closes fragment on positive button
+     * @param msg error to show in message field of AlertDialog
+     */
+    private void alertForRemoteNotSupported(String msg) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setCancelable(false);
+
+        builder.setTitle(R.string.error_title);
+        builder.setMessage(msg);
+
+        // Set up the buttons
+        builder.setPositiveButton(R.string.btn_ok, (dialog, which) -> navController.navigateUp());
+
+        builder.show();
+    }
+
+    /**
+     * checks and requests required permissions of fragment
+     * @return true fragment already has permissions, false if requesting permissions.
+     */
+    private boolean hasPermissions() {
+
+        if (bleAdapter == null || !bleAdapter.isEnabled()) {
+
+            requestBluetoothEnable();
+            return false;
+
+        } else if (!hasLocationPermissions()) {
+
+            requestLocationPermission();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * requesting to enable bluetooth via Intent.
+     */
+    private void requestBluetoothEnable() {
+
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        Log.d(TAG, "Requested user enables Bluetooth.");
+    }
+
+    /**
+     * checks for ACCESS_FINE_LOCATION granted
+     * @return returns boolean if permission granted
+     */
+    private boolean hasLocationPermissions() {
+        return ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * requesting permission ACCESS_FINE_LOCATION
+     */
+    private void requestLocationPermission() {
+        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
+    }
+
+    private BleScanListener bleScanListener = new BleScanListener() {
+
+        @Override
+        public void scanStartFailed() {
+            Toast.makeText(getActivity(), "Please turn on Bluetooth to connect BLE device", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onPeripheralFound(BluetoothDevice device, ScanResult scanResult) {
+
+            Log.d(TAG, "====== onPeripheralFound ===== " + device.getName());
+            boolean deviceExists = false;
+            String serviceUuid = "";
+
+            if (scanResult.getScanRecord().getServiceUuids() != null && scanResult.getScanRecord().getServiceUuids().size() > 0) {
+                serviceUuid = scanResult.getScanRecord().getServiceUuids().get(0).toString();
+            }
+            Log.d(TAG, "Add service UUID : " + serviceUuid);
+
+            if (bluetoothDevices.containsKey(device)) {
+                deviceExists = true;
+            }
+
+            if (!deviceExists) {
+                Remote remote = new Remote();
+                remote.setName(scanResult.getScanRecord().getDeviceName());
+                remote.setBluetoothDevice(device);
+
+                lvRemotes.setVisibility(View.VISIBLE);
+                bluetoothDevices.put(device, serviceUuid);
+                remoteList.add(remote);
+                adapter.notifyDataSetChanged();
+            }
+        }
+
+        @Override
+        public void scanCompleted() {
+            isScanning = false;
+            updateProgressAndScanBtn();
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
+        }
+    };
+
+    private final AdapterView.OnItemClickListener onRemoteCLickListener = new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+            //stopping scan
+            stopScan();
+            //setting state booleans
+            isConnecting = true;
+            isRemoteConnected = false;
+            //setting visibility
+            btnScan.setVisibility(View.GONE);
+            lvRemotes.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+
+            ProvisionFragment.this.position = position;
+            Remote remote = adapter.getItem(position);
+            String uuid = bluetoothDevices.get(remote.getBluetoothDevice());
+            Log.d(TAG, "=================== Connect to remote : " + remote.getName() + " UUID : " + uuid);
+
+            if (hasLocationPermissions()) {
+                provisionManager.getEspDevice().connectBLEDevice(remote.getBluetoothDevice(), uuid);
+            } else {
+                Log.e(TAG, "Not able to connect remote as Location permission is not granted.");
+                Toast.makeText(getActivity(), R.string.permmision_location_request, Toast.LENGTH_LONG).show();
+            }
+        }
+    };
 }
