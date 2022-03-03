@@ -1,4 +1,4 @@
-package com.itaicuker.unimot.models;
+package com.itaicuker.unimot.ui.models;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

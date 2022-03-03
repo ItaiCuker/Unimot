@@ -26,8 +26,10 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="enable_bluetooth_instructions">To provision your new remote, please make sure that your Phone\'s Bluetooth is turned on and within range of your new remote.</string>
+    <string name="device_id">device id</string>
+
+    <!--  Error Messages  -->
+    <string name="error_ble_not_supported">Sorry! BLE is not supported. try TODO</string>
+    <string name="error_bluetooth_not_supported">Sorry! Bluetooth is not supported. try TODO</string>
 </resources>

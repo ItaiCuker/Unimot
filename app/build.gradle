@@ -32,12 +32,17 @@ android {
 }
 
 dependencies {
+
     implementation 'com.github.espressif:esp-idf-provisioning-android:lib-2.0.11'
+    implementation 'org.greenrobot:eventbus:3.2.0'
+
     implementation platform('com.google.firebase:firebase-bom:29.0.3')
     // Declare the dependency for the Firebase Authentication library
     implementation 'com.google.firebase:firebase-auth'
+
     // Also declare the dependency for the Google Play services library and specify its version
     implementation 'com.google.android.gms:play-services-auth:20.1.0'
+
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'

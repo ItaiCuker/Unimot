@@ -6,17 +6,18 @@
     app:startDestination="@id/mainFragment">
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.itaicuker.unimot.fragments.mainFragment"
+        android:name="com.itaicuker.unimot.ui.fragments.MainFragment"
         android:label="Unimot"
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_provisionFragment"
-            app:destination="@id/provisionFragment" />
+            app:destination="@id/provisionFragment"
+            app:launchSingleTop="false" />
+    </fragment>
 
     <fragment
         android:id="@+id/provisionFragment"
-        android:name="com.itaicuker.unimot.fragments.ProvisionFragment"
-        android:label="provision a remote"
+        android:name="com.itaicuker.unimot.ui.fragments.ProvisionFragment"
+        android:label="Connect to remote"
         tools:layout="@layout/fragment_provision" />
-    </fragment>
 </navigation>
