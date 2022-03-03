@@ -32,4 +32,9 @@
     <!--  Error Messages  -->
     <string name="error_ble_not_supported">Sorry! BLE is not supported. try TODO</string>
     <string name="error_bluetooth_not_supported">Sorry! Bluetooth is not supported. try TODO</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dialog_provision_wifi">insert wifi credentials</string>
+    <string name="provision_new_remote">Provision new remote</string>
+    <string name="cancel">Cancel</string>
 </resources>

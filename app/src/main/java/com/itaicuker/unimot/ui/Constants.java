@@ -1,6 +1,5 @@
 package com.itaicuker.unimot.ui;
 
-public class AppConstants
+public class Constants
 {
-
 }

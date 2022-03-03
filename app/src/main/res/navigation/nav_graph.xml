@@ -11,13 +11,20 @@
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_provisionFragment"
-            app:destination="@id/provisionFragment"
-            app:launchSingleTop="false" />
+            app:destination="@id/provisionFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/provisionFragment"
         android:name="com.itaicuker.unimot.ui.fragments.ProvisionFragment"
         android:label="Connect to remote"
-        tools:layout="@layout/fragment_provision" />
+        tools:layout="@layout/fragment_provision" >
+        <action
+            android:id="@+id/action_provisionFragment_to_provisionWifiDialogFragment"
+            app:destination="@id/provisionWifiDialogFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/provisionWifiDialogFragment"
+        android:name="com.itaicuker.unimot.ui.fragments.ProvisionWifiDialogFragment"
+        android:label="ProvisionWifiDialogFragment"/>
 </navigation>
