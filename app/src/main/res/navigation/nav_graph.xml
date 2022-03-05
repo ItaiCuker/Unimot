@@ -16,15 +16,15 @@
 
     <fragment
         android:id="@+id/provisionFragment"
-        android:name="com.itaicuker.unimot.ui.fragments.ProvisionFragment"
+        android:name="com.itaicuker.unimot.ui.fragments.ProvisionConnectFragment"
         android:label="Connect to remote"
-        tools:layout="@layout/fragment_provision" >
-        <action
-            android:id="@+id/action_provisionFragment_to_provisionWifiDialogFragment"
-            app:destination="@id/provisionWifiDialogFragment" />
+        tools:layout="@layout/fragment_provision_connect" >
     </fragment>
     <dialog
         android:id="@+id/provisionWifiDialogFragment"
         android:name="com.itaicuker.unimot.ui.fragments.WifiCredentialsDialogFragment"
-        android:label="ProvisionWifiDialogFragment"/>
+        android:label="WiFI Credentials" />
+
+    <action android:id="@+id/action_global_provisionWifiDialogFragment"
+        app:destination="@id/provisionWifiDialogFragment" />
 </navigation>

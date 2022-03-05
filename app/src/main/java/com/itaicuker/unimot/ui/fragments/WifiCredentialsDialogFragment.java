@@ -17,7 +17,7 @@ import com.itaicuker.unimot.databinding.DialogWifiCredentialsBinding;
 
 public class WifiCredentialsDialogFragment extends DialogFragment implements DialogInterface.OnClickListener
 {
-    private static final String TAG = "WifiCredentialsDialogFragment";
+    public static final String REQUEST_WIFI_CREDENTIALS = "4";
 
     private NavController navController;
     private DialogWifiCredentialsBinding binding;
@@ -32,7 +32,7 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
         binding = DialogWifiCredentialsBinding.inflate(LayoutInflater.from(getContext()));
 
         //build dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setMessage(R.string.dialog_provision_wifi)
                 .setPositiveButton(R.string.provision_new_remote, this)
                 .setNegativeButton(R.string.cancel, this)
@@ -47,23 +47,22 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
     public void onClick(DialogInterface dialog, int which) {
 
         String SSID = binding.etSSID.getEditText().getText().toString();
-        String Password = binding.etSSIDPassword.getEditText().getText().toString();
+        String Pass = binding.etSSIDPassword.getEditText().getText().toString();
 
-        //if SSID field larger than 2 characters and Password field larger than 8 characters
-        if (which == dialog.BUTTON_POSITIVE
-            && SSID.length() >= 2
-            && Password.length() >= 8)
-        {
-            navController.getPreviousBackStackEntry().getSavedStateHandle()
-                    .set("SSID", SSID);
-            navController.getPreviousBackStackEntry().getSavedStateHandle()
-                    .set("PASS", Password);
+        //are credentials valid?
+        boolean validCredentials =
+                SSID.length() >= 2 && SSID.length() <= 32 &&
+                Pass.length() >= 8 & Pass.length() <= 63;
 
-            navController.navigateUp(); //dialog complete
-        }
-        if (which == dialog.BUTTON_NEGATIVE)
+        if (validCredentials && which == dialog.BUTTON_POSITIVE //if positive button and validCredentials or negative button
+            || which == dialog.BUTTON_NEGATIVE)
         {
-            navController.navigateUp(); //dismissing dialog
+            Bundle bundle = new Bundle();
+            bundle.putString("SSID", SSID);
+            bundle.putString("Pass", Pass);
+
+            requireActivity().getSupportFragmentManager().setFragmentResult(REQUEST_WIFI_CREDENTIALS, bundle);
+            dismiss();
         }
     }
 }

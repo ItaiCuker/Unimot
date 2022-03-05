@@ -10,7 +10,7 @@
         android:id="@+id/provision_remote_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.fragments.ProvisionFragment">
+        tools:context=".ui.fragments.ProvisionConnectFragment">
 
 
         <TextView
@@ -52,7 +52,9 @@
             app:layout_constraintBottom_toTopOf="@+id/btnScan"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvRemotes" />
+            app:layout_constraintTop_toBottomOf="@id/tvRemotes"
+            android:divider="@null"
+            android:dividerHeight="0dp"/>
 
         <Button
             android:id="@+id/btnScan"

@@ -26,7 +26,7 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="enable_bluetooth_instructions">To provision your new remote, please make sure that your Phone\'s Bluetooth is turned on and within range of your new remote.</string>
+    <string name="enable_bluetooth_instructions">To provision your new remote, please make sure that your Phone\'s Location and Bluetooth are turned on and  Phone is within range of your new remote.</string>
     <string name="device_id">device id</string>
 
     <!--  Error Messages  -->
@@ -41,4 +41,6 @@
     <string name="permmision_location_request">Please give location permission to connect device</string>
     <string name="error_title">Error!</string>
     <string name="btn_ok">OK</string>
+    <string name="dialog_msg_gps">Location services are disabled. Please enable them to continue</string>
+    <string name="toast_location_perm_denied">Provisioning requires location permission</string>
 </resources>
