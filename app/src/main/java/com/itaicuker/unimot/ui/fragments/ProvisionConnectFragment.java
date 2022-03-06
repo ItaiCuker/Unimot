@@ -12,10 +12,10 @@ import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,15 +26,17 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.ObservableBoolean;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.NavController.OnDestinationChangedListener;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 
 import com.espressif.provisioning.DeviceConnectionEvent;
@@ -42,7 +44,7 @@ import com.espressif.provisioning.ESPConstants;
 import com.espressif.provisioning.ESPProvisionManager;
 import com.espressif.provisioning.listeners.BleScanListener;
 import com.itaicuker.unimot.R;
-import com.itaicuker.unimot.databinding.FragmentProvisionBinding;
+import com.itaicuker.unimot.databinding.FragmentProvisionConnectBinding;
 import com.itaicuker.unimot.ui.adapters.BleRemoteListAdapter;
 import com.itaicuker.unimot.ui.models.Remote;
 
@@ -60,14 +62,19 @@ public class ProvisionConnectFragment extends Fragment {
 
     //ui declarations
     private NavController navController;
-    private FragmentProvisionBinding binding;
+    private FragmentProvisionConnectBinding binding;
 
     private Button btnScan;
     private ListView lvRemotes;
-    private ProgressBar progressBar;
 
     //prefix to filter BLE devices to only unimot
     private final String prefix = "UNIMOT_";
+    //proof of possession key
+    private static final String POP = "unimot";
+
+    //credentials
+    String ssid;
+    String pass;
 
     // Request codes
     private static final int REQUEST_ENABLE_BT = 1;
@@ -81,14 +88,21 @@ public class ProvisionConnectFragment extends Fragment {
 
     private HashMap<BluetoothDevice, String> bluetoothDevices; //hash map to bind BluetoothDevice obects with their respective UUID's
 
-    private boolean isRemoteConnected = false, isConnecting = false, isScanning = false;    //booleans for fragment state
+    private final ObservableBoolean isRemoteConnected, isConnecting, isScanning;    //booleans for fragment state
 
     private ESPProvisionManager provisionManager;   //manager singelton for using library
+
+    public ProvisionConnectFragment() {
+        isRemoteConnected = new ObservableBoolean(false);
+        isConnecting = new ObservableBoolean(false);
+        isScanning = new ObservableBoolean(false);
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //using binding instead of findviewbyid
-        binding = FragmentProvisionBinding.inflate(inflater, container, false);
+        binding = FragmentProvisionConnectBinding.inflate(inflater, container, false);
+        binding.setLifecycleOwner(getViewLifecycleOwner());
         setHasOptionsMenu(true);    //line to override options menu.
         return binding.getRoot();
     }
@@ -115,20 +129,27 @@ public class ProvisionConnectFragment extends Fragment {
             navController.navigateUp();
         }
 
-        //initializing state and sets
-        isConnecting = false;
-        isRemoteConnected = false;
+        //binding booleans to layout DataBinding booleans
+        binding.setIsConnecting(isConnecting);
+        binding.setIsScanning(isScanning);
+        binding.setIsRemoteConnected(isRemoteConnected);
+
+        //initializing sets
         bluetoothDevices = new HashMap<>();
         remoteList = new ArrayList<>();
 
         //getting provisionManager and creating ESPDevice object
         provisionManager = ESPProvisionManager.getInstance(requireContext().getApplicationContext());
-        //using BLE for communication, SECURITY_1 means its encrypted.
-        provisionManager.createESPDevice(ESPConstants.TransportType.TRANSPORT_BLE, ESPConstants.SecurityType.SECURITY_1);
+
+        //creating ESPDevice obj if not created yet
+        if (provisionManager.getEspDevice() == null)
+            //using BLE for communication, SECURITY_1 means its encrypted
+            provisionManager.createESPDevice(ESPConstants.TransportType.TRANSPORT_BLE, ESPConstants.SecurityType.SECURITY_1);
+        provisionManager.getEspDevice().setProofOfPossession(POP);
 
         initViews();
-
-        EventBus.getDefault().register(this);   //registering event for provisionManager usage
+        
+        EventBus.getDefault().register(this);   //registering event handler for provisionManager usage
     }
 
     /**
@@ -136,10 +157,9 @@ public class ProvisionConnectFragment extends Fragment {
      */
     private void initViews() {
         btnScan = binding.btnScan;
-        btnScan.setOnClickListener(btnScanClickListener);
+        lvRemotes = binding.lvRemotes;
 
-        lvRemotes = binding.listRemotes;
-        progressBar = binding.progressBar;
+        btnScan.setOnClickListener(btnScanClickListener);
 
         adapter = new BleRemoteListAdapter(requireContext(), R.layout.item_ble_scan, remoteList);
 
@@ -149,10 +169,18 @@ public class ProvisionConnectFragment extends Fragment {
 
     @Override
     public void onResume() {
+        navController.addOnDestinationChangedListener(destinationChangedListener);
+        if (!isRemoteConnected.get() && !isConnecting.get())    //starting scan if not started yet
+        {
+            startScan();
+        }
         super.onResume();
+    }
 
-        if (!isRemoteConnected && !isConnecting)    //starting scan if not started yet
-                startScan();
+    @Override
+    public void onPause() {
+        navController.removeOnDestinationChangedListener(destinationChangedListener);
+        super.onPause();
     }
 
     @Override
@@ -165,12 +193,10 @@ public class ProvisionConnectFragment extends Fragment {
 
         if (item.getItemId() == android.R.id.home)  //handling when user pressed back button
         {
-            if (isScanning) {
+            if (isScanning.get()) {
                 stopScan();
             }
-            if (provisionManager.getEspDevice() != null) {
-                provisionManager.getEspDevice().disconnectDevice();
-            }
+            provisionManager.getEspDevice().disconnectDevice();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -225,37 +251,52 @@ public class ProvisionConnectFragment extends Fragment {
 
                 Log.d(TAG, "Device Connected Event Received");
                 ArrayList<String> remoteCaps = provisionManager.getEspDevice().getDeviceCapabilities();
-                progressBar.setVisibility(View.GONE);
-                isConnecting = false;
-                isRemoteConnected = true;
+                isConnecting.set(false);
+                isRemoteConnected.set(true);
 
                 //navigating to dialog
                 navController.navigate(R.id.action_global_provisionWifiDialogFragment);
 
-                //waiting for result
+                //listener to wait for result
                 requireActivity().getSupportFragmentManager().setFragmentResultListener(REQUEST_WIFI_CREDENTIALS, getViewLifecycleOwner(), (requestKey, result) -> {
-                    String SSID = result.getString("SSID", null);
-                    String Pass = result.getString("Pass", null);
+
+                    ssid = result.getString("ssid", null);
+                    pass = result.getString("pass", null);
                 });
+
                 break;
 
             case ESPConstants.EVENT_DEVICE_DISCONNECTED:
 
-                progressBar.setVisibility(View.GONE);
-                isConnecting = false;
-                isRemoteConnected = false;
+                isConnecting.set(false);
+                isRemoteConnected.set(false);
                 Toast.makeText(getContext(), "Remote disconnected", Toast.LENGTH_LONG).show();
                 break;
 
             case ESPConstants.EVENT_DEVICE_CONNECTION_FAILED:
 
-                progressBar.setVisibility(View.GONE);
-                isConnecting = false;
-                isRemoteConnected = false;
+                isConnecting.set(false);
+                isRemoteConnected.set(false);
                 alertForRemoteNotSupported();
                 break;
         }
     }
+
+    /**
+     * Listener to check when returned from {@link WifiCredentialsDialogFragment}
+     */
+    private final OnDestinationChangedListener destinationChangedListener = new OnDestinationChangedListener() {
+        @Override
+        public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
+            if (!TextUtils.isEmpty(ssid + pass) && isRemoteConnected.get() && navDestination.getId() == R.id.provisionConnectFragment)    //returned from dialog with positive button
+            {
+                Bundle credentials = new Bundle();
+                credentials.putString("ssid", ssid);
+                credentials.putString("pass", pass);
+                navController.navigate(R.id.action_provisionConnectFragment_to_provisionStatusFragment, bundle);
+            }
+        }
+    };
 
     private final View.OnClickListener btnScanClickListener = new View.OnClickListener() {
 
@@ -271,52 +312,28 @@ public class ProvisionConnectFragment extends Fragment {
     @SuppressLint("MissingPermission")
     private void startScan() {
 
-        if (!hasDependencies() || isScanning) { //checking for dependencies and if already scanning
+        if (!hasDependencies() || isScanning.get()) { //checking for dependencies and if already scanning
             return;
         }
 
-        isScanning = true;
+        isScanning.set(true);
         remoteList.clear();
         bluetoothDevices.clear();
 
 
         provisionManager.searchBleEspDevices(prefix, bleScanListener);
-        updateProgressAndScanBtn();
     }
 
     @SuppressLint("MissingPermission")
     private void stopScan() {
 
-        isScanning = false;
+        isScanning.set(false);
 
         if (hasLocationPermissions()) {
             provisionManager.stopBleScan();
-            updateProgressAndScanBtn();
         } else {
             Log.e(TAG, "Not able to stop scan as Location permission is not granted.");
             Toast.makeText(getActivity(), "Please give location permission to stop BLE scan", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    /**
-     * This method will update UI (Scan button enable / disable and progressbar visibility)
-     */
-    private void updateProgressAndScanBtn() {
-
-        if (isScanning) {
-
-            btnScan.setEnabled(false);
-            btnScan.setAlpha(0.5f);
-            btnScan.setTextColor(Color.WHITE);
-            progressBar.setVisibility(View.VISIBLE);
-            lvRemotes.setVisibility(View.GONE);
-
-        } else {
-
-            btnScan.setEnabled(true);
-            btnScan.setAlpha(1f);
-            progressBar.setVisibility(View.GONE);
-            lvRemotes.setVisibility(View.VISIBLE);
         }
     }
 
@@ -331,9 +348,6 @@ public class ProvisionConnectFragment extends Fragment {
                .setMessage("Failed to connect to remote")
                .setPositiveButton(R.string.btn_ok, (dialog, which) -> dialog.dismiss())
                .show();
-
-        // Set up the buttons
-
     }
 
     /**
@@ -374,15 +388,8 @@ public class ProvisionConnectFragment extends Fragment {
         boolean network_enabled = false;
         LocationManager lm = (LocationManager) requireActivity().getApplicationContext().getSystemService(Activity.LOCATION_SERVICE);
 
-        try {
-            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {
-        }
-
-        try {
-            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch (Exception ex) {
-        }
+        gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
         Log.d(TAG, "GPS Enabled : " + gps_enabled + " , Network Enabled : " + network_enabled);
 
@@ -443,12 +450,11 @@ public class ProvisionConnectFragment extends Fragment {
                 deviceExists = true;
             }
 
-            if (!deviceExists) {
-                Remote remote = new Remote();
-                remote.setName(scanResult.getScanRecord().getDeviceName());
-                remote.setBluetoothDevice(device);
-
+            if (!deviceExists)
+            {
                 lvRemotes.setVisibility(View.VISIBLE);
+                Remote remote = new Remote(scanResult.getScanRecord().getDeviceName(), device);
+
                 bluetoothDevices.put(device, serviceUuid);
                 remoteList.add(remote);
                 adapter.notifyDataSetChanged();
@@ -457,8 +463,7 @@ public class ProvisionConnectFragment extends Fragment {
 
         @Override
         public void scanCompleted() {
-            isScanning = false;
-            updateProgressAndScanBtn();
+            isScanning.set(false);
         }
 
         @Override
@@ -475,12 +480,8 @@ public class ProvisionConnectFragment extends Fragment {
             //stopping scan
             stopScan();
             //setting state booleans
-            isConnecting = true;
-            isRemoteConnected = false;
-            //setting visibility
-            btnScan.setVisibility(View.GONE);
-            lvRemotes.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
+            isConnecting.set(true);
+            isRemoteConnected.set(false);
 
             Remote remote = adapter.getItem(position);
             String uuid = bluetoothDevices.get(remote.getBluetoothDevice());

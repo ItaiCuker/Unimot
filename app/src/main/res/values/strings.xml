@@ -32,8 +32,6 @@
     <!--  Error Messages  -->
     <string name="error_ble_not_supported">Sorry! BLE is not supported. try TODO</string>
     <string name="error_bluetooth_not_supported">Sorry! Bluetooth is not supported. try TODO</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="dialog_provision_wifi">Insert wifi credentials</string>
     <string name="provision_new_remote">Provision new remote</string>
     <string name="cancel">Cancel</string>
@@ -43,4 +41,15 @@
     <string name="btn_ok">OK</string>
     <string name="dialog_msg_gps">Location services are disabled. Please enable them to continue</string>
     <string name="toast_location_perm_denied">Provisioning requires location permission</string>
+    <string name="tv_remotes">remotes:</string>
+    <string name="prov_step_sending_text">Sending Wi-Fi credentials</string>
+    <string name="prov_step_applying_text">Applying Wi-Fi connection</string>
+    <string name="prov_step_checking_text">Checking provisioning status</string>
+    <string name="error_session_creation">Failed to create session</string>
+    <string name="dialog_msg_ble_device_disconnection">Device disconnected</string>
+    <string name="error_prov_step_sending">Failed to send Wi-Fi credentials</string>
+    <string name="error_prov_step_applying">Failed to apply Wi-Fi credentials</string>
+    <string name="error_prov_step_checking">Failed to provisioning device</string>
+    <string name="error_authentication_failed">Wi-Fi Authentication failed.</string>
+    <string name="error_network_not_found">Network not found.</string>
 </resources>

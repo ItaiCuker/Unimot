@@ -4,6 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
+        <variable
+            name="isConnecting"
+            type="androidx.databinding.ObservableBoolean" />
+        <variable
+            name="isScanning"
+            type="androidx.databinding.ObservableBoolean" />
+        <variable
+            name="isRemoteConnected"
+            type="androidx.databinding.ObservableBoolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="remotes"
+            android:text="@string/tv_remotes"
             android:textAppearance="@style/TextAppearance.Unimot.Headline5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvBluetoothInstructions" />
@@ -39,22 +49,24 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/listRemotes"
-            app:layout_constraintEnd_toEndOf="@+id/listRemotes"
-            app:layout_constraintStart_toStartOf="@+id/listRemotes"
-            app:layout_constraintTop_toTopOf="@+id/listRemotes" />
+            app:layout_constraintBottom_toBottomOf="@+id/lvRemotes"
+            app:layout_constraintEnd_toEndOf="@+id/lvRemotes"
+            app:layout_constraintStart_toStartOf="@+id/lvRemotes"
+            app:layout_constraintTop_toTopOf="@+id/lvRemotes"
+            android:visibility="@{isConnecting || isScanning ? View.VISIBLE : View.GONE}"/>
 
         <ListView
-            android:id="@+id/listRemotes"
+            android:id="@+id/lvRemotes"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="16dp"
+            android:layout_margin="32dp"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:visibility="@{isConnecting || isScanning ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toTopOf="@+id/btnScan"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvRemotes"
-            android:divider="@null"
-            android:dividerHeight="0dp"/>
+            app:layout_constraintTop_toBottomOf="@id/tvRemotes" />
 
         <Button
             android:id="@+id/btnScan"
@@ -63,7 +75,11 @@
             android:layout_margin="16dp"
             android:text="Scan Again"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="@{isConnecting ? View.GONE : View.VISIBLE}"
+            android:enabled="@{!isScanning}"
+            android:alpha="@{isScanning ? 0.5f : 1f}"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

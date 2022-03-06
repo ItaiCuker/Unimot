@@ -9,22 +9,30 @@
         android:name="com.itaicuker.unimot.ui.fragments.MainFragment"
         android:label="Unimot"
         tools:layout="@layout/fragment_main" >
-        <action
-            android:id="@+id/action_mainFragment_to_provisionFragment"
-            app:destination="@id/provisionFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/provisionFragment"
+        android:id="@+id/provisionConnectFragment"
         android:name="com.itaicuker.unimot.ui.fragments.ProvisionConnectFragment"
         android:label="Connect to remote"
         tools:layout="@layout/fragment_provision_connect" >
+        <action
+            android:id="@+id/action_provisionConnectFragment_to_provisionStatusFragment"
+            app:destination="@id/provisionStatusFragment" />
     </fragment>
+
     <dialog
         android:id="@+id/provisionWifiDialogFragment"
         android:name="com.itaicuker.unimot.ui.fragments.WifiCredentialsDialogFragment"
-        android:label="WiFI Credentials" />
+        android:label="WiFI Credentials"
+        tools:layout="@layout/dialog_wifi_credentials"/>
 
     <action android:id="@+id/action_global_provisionWifiDialogFragment"
         app:destination="@id/provisionWifiDialogFragment" />
+
+    <fragment
+        android:id="@+id/provisionStatusFragment"
+        android:name="com.itaicuker.unimot.ui.fragments.ProvisionStatusFragment"
+        android:label="Status"
+        tools:layout="@layout/fragment_provision_status"/>
 </navigation>

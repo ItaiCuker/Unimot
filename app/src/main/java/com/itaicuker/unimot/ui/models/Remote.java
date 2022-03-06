@@ -7,6 +7,11 @@ public class Remote
     private String name;
     private BluetoothDevice bluetoothDevice;
 
+    public Remote(String name, BluetoothDevice bluetoothDevice) {
+        this.name = name;
+        this.bluetoothDevice = bluetoothDevice;
+    }
+
     public String getName() {
         return name;
     }
