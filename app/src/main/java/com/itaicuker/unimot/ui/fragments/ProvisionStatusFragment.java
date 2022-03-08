@@ -77,6 +77,7 @@ public class ProvisionStatusFragment extends Fragment {
 
         EventBus.getDefault().register(this);   //registering event handler for provisionManager usage
 
+        initViews();
         doProvisioning();
     }
 

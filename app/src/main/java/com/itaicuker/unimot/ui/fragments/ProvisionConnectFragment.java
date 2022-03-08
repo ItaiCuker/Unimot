@@ -35,8 +35,6 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.ObservableBoolean;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
-import androidx.navigation.NavController.OnDestinationChangedListener;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 
 import com.espressif.provisioning.DeviceConnectionEvent;
@@ -89,6 +87,7 @@ public class ProvisionConnectFragment extends Fragment {
     private HashMap<BluetoothDevice, String> bluetoothDevices; //hash map to bind BluetoothDevice obects with their respective UUID's
 
     private final ObservableBoolean isRemoteConnected, isConnecting, isScanning;    //booleans for fragment state
+    private boolean isDialogSuccess;
 
     private ESPProvisionManager provisionManager;   //manager singelton for using library
 
@@ -96,6 +95,7 @@ public class ProvisionConnectFragment extends Fragment {
         isRemoteConnected = new ObservableBoolean(false);
         isConnecting = new ObservableBoolean(false);
         isScanning = new ObservableBoolean(false);
+        isDialogSuccess = false;
     }
 
     @Override
@@ -171,9 +171,7 @@ public class ProvisionConnectFragment extends Fragment {
     public void onResume() {
         navController.addOnDestinationChangedListener(destinationChangedListener);
         if (!isRemoteConnected.get() && !isConnecting.get())    //starting scan if not started yet
-        {
             startScan();
-        }
         super.onResume();
     }
 
@@ -241,6 +239,18 @@ public class ProvisionConnectFragment extends Fragment {
         }
     }
 
+    private NavController.OnDestinationChangedListener destinationChangedListener = (navController, navDestination, bundle) -> {
+        Log.d("OnDestinationListener", "\ncurrent =\t" + navDestination.getDisplayName());
+        if (navDestination.getId() == R.id.provisionConnectFragment && isDialogSuccess){
+            //if on this fragment and returned from WifiCredentialsDialogFragment
+            isDialogSuccess = false;    //eliminate infinite loop
+            Bundle credentials = new Bundle();
+            credentials.putString("ssid", ssid);
+            credentials.putString("pass", pass);
+            navController.navigate(R.id.action_provisionConnectFragment_to_provisionStatusFragment, credentials);
+        }
+    };
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(DeviceConnectionEvent event) {
 
@@ -262,6 +272,10 @@ public class ProvisionConnectFragment extends Fragment {
 
                     ssid = result.getString("ssid", null);
                     pass = result.getString("pass", null);
+
+                    if (!TextUtils.isEmpty(ssid+pass)){
+                        isDialogSuccess = true;
+                    }
                 });
 
                 break;
@@ -270,7 +284,7 @@ public class ProvisionConnectFragment extends Fragment {
 
                 isConnecting.set(false);
                 isRemoteConnected.set(false);
-                Toast.makeText(getContext(), "Remote disconnected", Toast.LENGTH_LONG).show();
+                //TODO: start alert
                 break;
 
             case ESPConstants.EVENT_DEVICE_CONNECTION_FAILED:
@@ -281,22 +295,6 @@ public class ProvisionConnectFragment extends Fragment {
                 break;
         }
     }
-
-    /**
-     * Listener to check when returned from {@link WifiCredentialsDialogFragment}
-     */
-    private final OnDestinationChangedListener destinationChangedListener = new OnDestinationChangedListener() {
-        @Override
-        public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
-            if (!TextUtils.isEmpty(ssid + pass) && isRemoteConnected.get() && navDestination.getId() == R.id.provisionConnectFragment)    //returned from dialog with positive button
-            {
-                Bundle credentials = new Bundle();
-                credentials.putString("ssid", ssid);
-                credentials.putString("pass", pass);
-                navController.navigate(R.id.action_provisionConnectFragment_to_provisionStatusFragment, bundle);
-            }
-        }
-    };
 
     private final View.OnClickListener btnScanClickListener = new View.OnClickListener() {
 
@@ -384,8 +382,8 @@ public class ProvisionConnectFragment extends Fragment {
 
     private boolean isLocationEnabled() {
 
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
+        boolean gps_enabled;
+        boolean network_enabled;
         LocationManager lm = (LocationManager) requireActivity().getApplicationContext().getSystemService(Activity.LOCATION_SERVICE);
 
         gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -398,7 +396,7 @@ public class ProvisionConnectFragment extends Fragment {
 
     private void askForLocation()
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setCancelable(true);
         builder.setMessage(R.string.dialog_msg_gps);
 

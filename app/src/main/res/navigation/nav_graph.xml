@@ -9,6 +9,9 @@
         android:name="com.itaicuker.unimot.ui.fragments.MainFragment"
         android:label="Unimot"
         tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_provisionConnectFragment"
+            app:destination="@id/provisionConnectFragment" />
     </fragment>
 
     <fragment
