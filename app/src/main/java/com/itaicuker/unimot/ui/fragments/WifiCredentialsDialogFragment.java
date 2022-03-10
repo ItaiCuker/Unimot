@@ -43,8 +43,6 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
     private DialogWifiCredentialsBinding binding;
     private ESPProvisionManager provisionManager;
 
-    private ArrayList<WiFiAccessPoint> wifiAPList;
-
     private AlertDialog dialog;
 
     private ArrayAdapter adapter;

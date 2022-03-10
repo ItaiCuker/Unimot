@@ -211,10 +211,12 @@ public class ProvisionStatusFragment extends Fragment {
             @Override
             public void deviceProvisioningSuccess() {
                 //setting ui to success state
-                isProvisioningCompleted = true;
                 tickChecking.setImageResource(R.drawable.ic_checkbox_on);
                 tickChecking.setVisibility(View.VISIBLE);
                 progChecking.setVisibility(View.GONE);
+
+                isProvisioningCompleted = true;
+                provisionManager.getEspDevice().disconnectDevice();
             }
 
             @Override
