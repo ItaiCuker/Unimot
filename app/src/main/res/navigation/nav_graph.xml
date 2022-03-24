@@ -30,12 +30,19 @@
         android:label="WiFI Credentials"
         tools:layout="@layout/dialog_wifi_credentials"/>
 
-    <action android:id="@+id/action_global_provisionWifiDialogFragment"
-        app:destination="@id/provisionWifiDialogFragment" />
-
     <fragment
         android:id="@+id/provisionStatusFragment"
         android:name="com.itaicuker.unimot.ui.fragments.ProvisionStatusFragment"
         android:label="Status"
         tools:layout="@layout/fragment_provision_status"/>
+    <dialog
+        android:id="@+id/remoteDisconnectedDialogFragment"
+        android:name="com.itaicuker.unimot.ui.fragments.RemoteDisconnectedDialogFragment"
+        android:label="RemoteDisconnectedDialogFragment" />
+
+    <action android:id="@+id/action_global_provisionWifiDialogFragment"
+        app:destination="@id/provisionWifiDialogFragment" />
+
+    <action android:id="@+id/action_global_remoteDisconnectedDialogFragment"
+        app:destination="@id/remoteDisconnectedDialogFragment" />
 </navigation>

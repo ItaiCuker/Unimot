@@ -284,7 +284,7 @@ public class ProvisionConnectFragment extends Fragment {
 
                 isConnecting.set(false);
                 isRemoteConnected.set(false);
-                //TODO: start alert
+                navController.navigate(R.id.action_global_remoteDisconnectedDialogFragment);
                 break;
 
             case ESPConstants.EVENT_DEVICE_CONNECTION_FAILED:

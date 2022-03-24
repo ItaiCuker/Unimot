@@ -1,6 +1,6 @@
 package com.itaicuker.unimot.ui.fragments;
 
-import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 import android.os.Bundle;
@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -124,7 +123,7 @@ public class ProvisionStatusFragment extends Fragment {
 
             case ESPConstants.EVENT_DEVICE_DISCONNECTED:
                 if (!isRemoving() && !isProvisioningCompleted) {
-                    showAlertForDeviceDisconnected();
+                    navController.navigate(R.id.action_global_remoteDisconnectedDialogFragment);
                 }
                 break;
         }
@@ -133,114 +132,128 @@ public class ProvisionStatusFragment extends Fragment {
 
     private void doProvisioning() {
 
-        tickSending.setVisibility(GONE);
+        tickSending.setVisibility(INVISIBLE);
         progSending.setVisibility(VISIBLE);
 
         provisionManager.getEspDevice().provision(ssid, pass, new ProvisionListener() {
             @Override
             public void createSessionFailed(Exception e) {
-                //setting ui to session failed state
-                tickSending.setImageResource(R.drawable.ic_error);
-                tickSending.setVisibility(VISIBLE);
-                progSending.setVisibility(GONE);
-                tvProvError.setText(R.string.error_session_creation);
+
+                //using Ui thread
+                requireActivity().runOnUiThread(() -> {
+                    //setting ui to session failed state
+                    tickSending.setImageResource(R.drawable.ic_error);
+                    tickSending.setVisibility(VISIBLE);
+                    progSending.setVisibility(INVISIBLE);
+                    tvProvError.setText(R.string.error_session_creation);
+                });
+
             }
 
             @Override
             public void wifiConfigSent() {
-                //setting ui to wifi config sent state
-                tickSending.setImageResource(R.drawable.ic_checkbox_on);
-                tickSending.setVisibility(VISIBLE);
-                progSending.setVisibility(GONE);
+                //using Ui thread
+                requireActivity().runOnUiThread(() -> {
+                    //setting ui to wifi config sent state
+                    tickSending.setImageResource(R.drawable.ic_checkbox_on);
+                    tickSending.setVisibility(VISIBLE);
+                    progSending.setVisibility(INVISIBLE);
 
-                //setting waiting to config applied state
-                tickApplying.setVisibility(GONE);
-                progApplying.setVisibility(VISIBLE);
+                    //setting waiting to config applied state
+                    tickApplying.setVisibility(INVISIBLE);
+                    progApplying.setVisibility(VISIBLE);
+                });
             }
 
             @Override
             public void wifiConfigFailed(Exception e) {
-                //setting ui to wifi config failed state
-                tickSending.setImageResource(R.drawable.ic_error);
-                tickSending.setVisibility(View.VISIBLE);
-                progSending.setVisibility(View.GONE);
-                tvProvError.setText(R.string.error_prov_step_sending);
+                //using Ui thread
+                requireActivity().runOnUiThread(() -> {
+                    //setting ui to wifi config failed state
+                    tickSending.setImageResource(R.drawable.ic_error);
+                    tickSending.setVisibility(View.VISIBLE);
+                    progSending.setVisibility(View.INVISIBLE);
+                    tvProvError.setText(R.string.error_prov_step_sending);
+                });
             }
 
             @Override
             public void wifiConfigApplied() {
-                //setting ui to wifi config applied state
-                tickApplying.setImageResource(R.drawable.ic_checkbox_on);
-                tickApplying.setVisibility(View.VISIBLE);
-                progApplying.setVisibility(View.GONE);
+                //using Ui thread
+                requireActivity().runOnUiThread(() -> {
+                    //setting ui to wifi config applied state
+                    tickApplying.setImageResource(R.drawable.ic_checkbox_on);
+                    tickApplying.setVisibility(View.VISIBLE);
+                    progApplying.setVisibility(View.INVISIBLE);
 
-                //setting waiting to config checked state
-                tickChecking.setVisibility(View.GONE);
-                progChecking.setVisibility(View.VISIBLE);
+                    //setting waiting to config checked state
+                    tickChecking.setVisibility(View.INVISIBLE);
+                    progChecking.setVisibility(View.VISIBLE);
+                });
             }
 
             @Override
             public void wifiConfigApplyFailed(Exception e) {
-                //setting ui to wifi apply failed state
-                tickApplying.setImageResource(R.drawable.ic_error);
-                tickApplying.setVisibility(View.VISIBLE);
-                progApplying.setVisibility(View.GONE);
-                tvProvError.setText(R.string.error_prov_step_applying);
+                //using Ui thread
+                requireActivity().runOnUiThread(() -> {
+                    //setting ui to wifi apply failed state
+                    tickApplying.setImageResource(R.drawable.ic_error);
+                    tickApplying.setVisibility(View.VISIBLE);
+                    progApplying.setVisibility(View.INVISIBLE);
+                    tvProvError.setText(R.string.error_prov_step_applying);
+                });
             }
 
             @Override
             public void provisioningFailedFromDevice(ESPConstants.ProvisionFailureReason failureReason) {
-                switch (failureReason) {    //setting error message
-                    case AUTH_FAILED:
-                         tvProvError.setText(R.string.error_authentication_failed);
-                        break;
-                    case NETWORK_NOT_FOUND:
-                         tvProvError.setText(R.string.error_network_not_found);
-                        break;
-                    case DEVICE_DISCONNECTED:
-                    case UNKNOWN:
-                         tvProvError.setText(R.string.error_prov_step_checking);
-                        break;
-                }
-                //setting ui to wifi provisioning failed from device failed state
-                tickChecking.setImageResource(R.drawable.ic_error);
-                tickChecking.setVisibility(View.VISIBLE);
-                progChecking.setVisibility(View.GONE);
+                //using Ui thread
+                requireActivity().runOnUiThread(() -> {
+                    switch (failureReason) {    //setting error message
+                        case AUTH_FAILED:
+                            tvProvError.setText(R.string.error_authentication_failed);
+                            break;
+                        case NETWORK_NOT_FOUND:
+                            tvProvError.setText(R.string.error_network_not_found);
+                            break;
+                        case DEVICE_DISCONNECTED:
+                        case UNKNOWN:
+                            tvProvError.setText(R.string.error_prov_step_checking);
+                            break;
+                    }
+                    //setting ui to wifi provisioning failed from device failed state
+                    tickChecking.setImageResource(R.drawable.ic_error);
+                    tickChecking.setVisibility(View.VISIBLE);
+                    progChecking.setVisibility(View.INVISIBLE);
+                });
             }
 
             @Override
             public void deviceProvisioningSuccess() {
-                //setting ui to success state
-                isProvisioningCompleted = true;
-                tickChecking.setImageResource(R.drawable.ic_checkbox_on);
-                tickChecking.setVisibility(View.VISIBLE);
-                progChecking.setVisibility(View.GONE);
+                //using Ui thread
+                requireActivity().runOnUiThread(() -> {
+                    //setting ui to success state
+                    isProvisioningCompleted = true;
+                    tickChecking.setImageResource(R.drawable.ic_checkbox_on);
+                    tickChecking.setVisibility(View.VISIBLE);
+                    progChecking.setVisibility(View.INVISIBLE);
+                });
             }
 
             @Override
             public void onProvisioningFailed(Exception e) {
-                //setting ui to provisioning failed failed state
-                tickChecking.setImageResource(R.drawable.ic_error);
-                tickChecking.setVisibility(View.VISIBLE);
-                progChecking.setVisibility(View.GONE);
-                tvProvError.setText(R.string.error_prov_step_checking);
+                //using Ui thread
+                requireActivity().runOnUiThread(() -> {
+                    //setting ui to provisioning failed failed state
+                    tickChecking.setImageResource(R.drawable.ic_error);
+                    tickChecking.setVisibility(View.VISIBLE);
+                    progChecking.setVisibility(View.INVISIBLE);
+                    tvProvError.setText(R.string.error_prov_step_checking);
+                });
             }
         });
     }
 
     private void showAlertForDeviceDisconnected() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
-        builder.setCancelable(false);
-        builder.setTitle(R.string.error_title);
-        builder.setMessage(R.string.dialog_msg_ble_device_disconnection);
-
-        // Set up the buttons
-        builder.setPositiveButton(R.string.btn_ok, (dialog, which) -> {
-            dialog.dismiss();
-            navController.navigateUp();
-        });
-
-        builder.show();
     }
 }

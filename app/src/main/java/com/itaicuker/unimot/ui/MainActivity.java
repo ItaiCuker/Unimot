@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity
 
         //line to setup my toolbar with nav controller
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        navController.navigate(R.id.action_global_provisionWifiDialogFragment);
     }
 
     /**

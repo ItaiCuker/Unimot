@@ -30,4 +30,9 @@
     <style name="Widget.Unimot.TextInputEditText.OutLinedBox" parent="Widget.MaterialComponents.TextInputEditText.OutlinedBox">
     </style>
 
+    <!--AlertDialog-->
+    <style name="ThemeOverlay.Unimot.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="materialAlertDialogTitleTextStyle">@style/TextAppearance.Unimot.Headline3</item>
+        <item name="android:textAppearance">@style/TextAppearance.Unimot.Subtitle1</item>
+    </style>
 </resources>

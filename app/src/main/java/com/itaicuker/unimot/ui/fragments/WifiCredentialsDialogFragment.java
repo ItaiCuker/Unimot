@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -18,12 +19,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.ObservableBoolean;
 import androidx.fragment.app.DialogFragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.espressif.provisioning.DeviceConnectionEvent;
 import com.espressif.provisioning.ESPConstants;
 import com.espressif.provisioning.ESPProvisionManager;
 import com.espressif.provisioning.WiFiAccessPoint;
 import com.espressif.provisioning.listeners.WiFiScanListener;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.itaicuker.unimot.R;
 import com.itaicuker.unimot.databinding.DialogWifiCredentialsBinding;
 
@@ -33,7 +37,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class WifiCredentialsDialogFragment extends DialogFragment implements DialogInterface.OnClickListener
 {
@@ -54,6 +57,7 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
     private Button btnOk, btnCancel;
     
     private ObservableBoolean isScanning;
+    private NavController navController;
 
     @NonNull
     @Override
@@ -62,7 +66,7 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
         binding = DialogWifiCredentialsBinding.inflate(LayoutInflater.from(getContext()));
 
         //build dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
         builder.setMessage(R.string.dialog_provision_wifi)
                 .setPositiveButton(R.string.provision_new_remote, this)
                 .setNegativeButton(R.string.cancel, this)
@@ -71,6 +75,11 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
 
         // Create the AlertDialog object and return it
         return builder.create();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     /**
@@ -85,8 +94,8 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
     @Override
     public void onStart() {
         super.onStart();
-
         dialog = (AlertDialog) getDialog();
+        navController = NavHostFragment.findNavController(this);
 
         //init views
         acetSsid = binding.acetSsid;
@@ -105,6 +114,7 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
         binding.setLifecycleOwner(this);
         isScanning = new ObservableBoolean(true);
         binding.setIsScanning(isScanning);
+
 
         //starting scan and getting provisionManager
         provisionManager = provisionManager.getInstance(requireActivity().getApplicationContext());
@@ -169,16 +179,7 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
 
             case ESPConstants.EVENT_DEVICE_DISCONNECTED:
                 if (!isRemoving()) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
-                    builder.setCancelable(false);
-                    builder.setTitle(R.string.error_title);
-                    builder.setMessage(R.string.dialog_msg_ble_device_disconnection);
-
-                    builder.setPositiveButton(R.string.btn_ok, (dialog, which) -> {
-                        //TODO: alert parent about this
-                    });
-
-                    builder.show();
+                    navController.navigate(R.id.action_global_remoteDisconnectedDialogFragment);
                 }
                 break;
         }
@@ -191,29 +192,44 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
         provisionManager.getEspDevice().scanNetworks(new WiFiScanListener() {
             @Override
             public void onWifiListReceived(ArrayList<WiFiAccessPoint> wifiList) {
+                Log.d(TAG, "AccessPoints recieved");
 
-                //getting list of ssid's in AutoCompleteTextView:
+                //using Ui thread
+                requireActivity().runOnUiThread(() -> {
+                    //enabling cancel and changing state
+                    btnCancel.setEnabled(true);
+                    btnOk.setEnabled(true);
+                    isScanning.set(false);
 
-                List<String> listSsid = wifiList.stream()   //converting WiFiAccessPoint list to String list with SSID values
-                        .map(WiFiAccessPoint::getWifiName)
-                        .collect(Collectors.toList());
-                //creating and setting adapter
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.item_ap_scan, listSsid);
-                acetSsid.setAdapter(adapter);
+                    //getting list of ssid's in AutoCompleteTextView:
+                    List<String> listSsids = new ArrayList<>();   //converting WiFiAccessPoint list to String list with SSID values
+                    for (WiFiAccessPoint accessPoint: wifiList)
+                        listSsids.add(accessPoint.getWifiName());
 
-                //enabling cancel and changing state
-                btnCancel.setEnabled(true);
-                btnOk.setEnabled(true);
-                isScanning.set(false);
+                    //creating and setting adapter
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, listSsids);
+                    acetSsid.setAdapter(adapter);
+
+                    //ensuring drop down visibility:
+                    acetSsid.setOnFocusChangeListener((v, hasFocus) -> {
+                        if (v.getId() == R.id.acetSsid && hasFocus)
+                            acetSsid.showDropDown();
+                    });
+                    acetSsid.setOnClickListener((v) -> {
+                        acetSsid.showDropDown();
+                    });
+                });
             }
 
             @Override
             public void onWiFiScanFailed(Exception e) {
-                //scan failed, continuing anyways
-                //enabling cancel and changing state
-                btnCancel.setEnabled(true);
-                btnOk.setEnabled(true);
-                isScanning.set(false);
+                //using Ui thread
+                requireActivity().runOnUiThread(() -> {//scan failed, continuing anyways
+                    //enabling cancel and changing state
+                    btnCancel.setEnabled(true);
+                    btnOk.setEnabled(true);
+                    isScanning.set(false);
+                });
             }
         });
     }

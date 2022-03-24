@@ -60,6 +60,7 @@
         </item>
         <!--Component styles-->
         <item name="textInputStyle">@style/Widget.Unimot.TextInputLayout</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Unimot.MaterialAlertDialog</item>
     </style>
 
     <style name="Base.Theme.Unimot" parent="Theme.MaterialComponents.DayNight.NoActionBar">
