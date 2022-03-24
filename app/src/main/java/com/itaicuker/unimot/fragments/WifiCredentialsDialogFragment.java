@@ -1,4 +1,4 @@
-package com.itaicuker.unimot.ui.fragments;
+package com.itaicuker.unimot.fragments;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -45,8 +45,6 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
 
     private DialogWifiCredentialsBinding binding;
     private ESPProvisionManager provisionManager;
-
-    private ArrayList<WiFiAccessPoint> wifiAPList;
 
     private AlertDialog dialog;
 

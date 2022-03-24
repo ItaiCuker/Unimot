@@ -1,4 +1,4 @@
-package com.itaicuker.unimot.ui.fragments;
+package com.itaicuker.unimot.fragments;
 
 import android.app.Dialog;
 import android.os.Bundle;

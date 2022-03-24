@@ -1,4 +1,4 @@
-package com.itaicuker.unimot.ui.fragments;
+package com.itaicuker.unimot.fragments;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;

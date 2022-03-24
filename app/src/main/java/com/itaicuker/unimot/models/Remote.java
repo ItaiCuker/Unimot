@@ -1,4 +1,4 @@
-package com.itaicuker.unimot.ui.models;
+package com.itaicuker.unimot.models;
 
 import android.bluetooth.BluetoothDevice;
 

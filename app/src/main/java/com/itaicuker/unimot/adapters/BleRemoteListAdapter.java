@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.itaicuker.unimot.ui.adapters;
+package com.itaicuker.unimot.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,7 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.itaicuker.unimot.R;
-import com.itaicuker.unimot.ui.models.Remote;
+import com.itaicuker.unimot.models.Remote;
 
 import java.util.ArrayList;
 

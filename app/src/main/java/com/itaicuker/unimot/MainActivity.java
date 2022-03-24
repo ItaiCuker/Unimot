@@ -1,4 +1,4 @@
-package com.itaicuker.unimot.ui;
+package com.itaicuker.unimot;
 
 import android.os.Bundle;
 
@@ -10,7 +10,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.itaicuker.unimot.R;
 import com.itaicuker.unimot.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity

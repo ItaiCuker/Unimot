@@ -6,7 +6,7 @@
     app:startDestination="@id/mainFragment">
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.itaicuker.unimot.ui.fragments.MainFragment"
+        android:name="com.itaicuker.unimot.fragments.MainFragment"
         android:label="Unimot"
         tools:layout="@layout/fragment_main" >
         <action
@@ -16,7 +16,7 @@
 
     <fragment
         android:id="@+id/provisionConnectFragment"
-        android:name="com.itaicuker.unimot.ui.fragments.ProvisionConnectFragment"
+        android:name="com.itaicuker.unimot.fragments.ProvisionConnectFragment"
         android:label="Connect to remote"
         tools:layout="@layout/fragment_provision_connect" >
         <action
@@ -26,18 +26,18 @@
 
     <dialog
         android:id="@+id/provisionWifiDialogFragment"
-        android:name="com.itaicuker.unimot.ui.fragments.WifiCredentialsDialogFragment"
+        android:name="com.itaicuker.unimot.fragments.WifiCredentialsDialogFragment"
         android:label="WiFI Credentials"
         tools:layout="@layout/dialog_wifi_credentials"/>
 
     <fragment
         android:id="@+id/provisionStatusFragment"
-        android:name="com.itaicuker.unimot.ui.fragments.ProvisionStatusFragment"
+        android:name="com.itaicuker.unimot.fragments.ProvisionStatusFragment"
         android:label="Status"
         tools:layout="@layout/fragment_provision_status"/>
     <dialog
         android:id="@+id/remoteDisconnectedDialogFragment"
-        android:name="com.itaicuker.unimot.ui.fragments.RemoteDisconnectedDialogFragment"
+        android:name="com.itaicuker.unimot.fragments.RemoteDisconnectedDialogFragment"
         android:label="RemoteDisconnectedDialogFragment" />
 
     <action android:id="@+id/action_global_provisionWifiDialogFragment"

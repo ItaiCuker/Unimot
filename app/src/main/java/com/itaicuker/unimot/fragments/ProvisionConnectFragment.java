@@ -1,6 +1,6 @@
-package com.itaicuker.unimot.ui.fragments;
+package com.itaicuker.unimot.fragments;
 
-import static com.itaicuker.unimot.ui.fragments.WifiCredentialsDialogFragment.REQUEST_WIFI_CREDENTIALS;
+import static com.itaicuker.unimot.fragments.WifiCredentialsDialogFragment.REQUEST_WIFI_CREDENTIALS;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -42,9 +42,9 @@ import com.espressif.provisioning.ESPConstants;
 import com.espressif.provisioning.ESPProvisionManager;
 import com.espressif.provisioning.listeners.BleScanListener;
 import com.itaicuker.unimot.R;
+import com.itaicuker.unimot.adapters.BleRemoteListAdapter;
 import com.itaicuker.unimot.databinding.FragmentProvisionConnectBinding;
-import com.itaicuker.unimot.ui.adapters.BleRemoteListAdapter;
-import com.itaicuker.unimot.ui.models.Remote;
+import com.itaicuker.unimot.models.Remote;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
