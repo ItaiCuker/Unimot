@@ -172,6 +172,7 @@ public class ProvisionConnectFragment extends Fragment {
         navController.addOnDestinationChangedListener(destinationChangedListener);
         if (!isRemoteConnected.get() && !isConnecting.get())    //starting scan if not started yet
             startScan();
+        navController.navigate(R.id.action_provisionConnectFragment_to_provisionWifiDialogFragment);
         super.onResume();
     }
 
@@ -265,7 +266,7 @@ public class ProvisionConnectFragment extends Fragment {
                 isRemoteConnected.set(true);
 
                 //navigating to dialog
-                navController.navigate(R.id.action_global_provisionWifiDialogFragment);
+                navController.navigate(R.id.action_provisionConnectFragment_to_provisionWifiDialogFragment);
 
                 //listener to wait for result
                 requireActivity().getSupportFragmentManager().setFragmentResultListener(REQUEST_WIFI_CREDENTIALS, getViewLifecycleOwner(), (requestKey, result) -> {

@@ -52,4 +52,6 @@
     <string name="error_prov_step_checking">Failed to provisioning device</string>
     <string name="error_authentication_failed">Wi-Fi Authentication failed.</string>
     <string name="error_network_not_found">Network not found.</string>
+    <string name="btn_signUp">Sign Up</string>
+    <string name="btn_signIn">Sign In</string>
 </resources>

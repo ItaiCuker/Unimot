@@ -16,6 +16,8 @@ public class MainActivity extends AppCompatActivity
 {
     private final String TAG = "MainActivity";
 
+    private static final int REQ_ONE_TAP = 100;
+
     private NavController navController;    //navigation controller
     private Toolbar toolbar;    //toolbar of application
     private AppBarConfiguration appBarConfiguration;    //configuration object so i can interact with toolbar using navigation graph

@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_mainFragment_to_provisionConnectFragment"
             app:destination="@id/provisionConnectFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_remoteFragment"
+            app:destination="@id/remoteFragment" />
     </fragment>
 
     <fragment
@@ -22,6 +25,9 @@
         <action
             android:id="@+id/action_provisionConnectFragment_to_provisionStatusFragment"
             app:destination="@id/provisionStatusFragment" />
+        <action
+            android:id="@+id/action_provisionConnectFragment_to_provisionWifiDialogFragment"
+            app:destination="@id/provisionWifiDialogFragment" />
     </fragment>
 
     <dialog
@@ -35,14 +41,21 @@
         android:name="com.itaicuker.unimot.fragments.ProvisionStatusFragment"
         android:label="Status"
         tools:layout="@layout/fragment_provision_status"/>
+    <fragment
+        android:id="@+id/remoteFragment"
+        android:name="com.itaicuker.unimot.fragments.remoteFragment"
+        android:label="remoteFragment"
+        tools:layout="@layout/fragment_ir_ac"/>
     <dialog
         android:id="@+id/remoteDisconnectedDialogFragment"
         android:name="com.itaicuker.unimot.fragments.RemoteDisconnectedDialogFragment"
         android:label="RemoteDisconnectedDialogFragment" />
 
-    <action android:id="@+id/action_global_provisionWifiDialogFragment"
-        app:destination="@id/provisionWifiDialogFragment" />
-
     <action android:id="@+id/action_global_remoteDisconnectedDialogFragment"
         app:destination="@id/remoteDisconnectedDialogFragment" />
+    <fragment
+        android:id="@+id/landingFragment"
+        android:name="com.itaicuker.unimot.fragments.LandingFragment"
+        android:label="LandingFragment"
+        tools:layout="@layout/fragment_landing"/>
 </navigation>

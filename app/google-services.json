@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "30772447362-nim816tu2rml8lan7jqerrhk17tilvns.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.itaicuker.unimot",
+            "certificate_hash": "e91844fc69028b056dcdb17355a99a383e032a2b"
+          }
+        },
+        {
           "client_id": "30772447362-vioh7ftdnni6enmdnbjrcnblvkdern6p.apps.googleusercontent.com",
           "client_type": 3
         }
