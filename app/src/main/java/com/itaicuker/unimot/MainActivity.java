@@ -1,6 +1,7 @@
 package com.itaicuker.unimot;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -10,13 +11,13 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.itaicuker.unimot.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity
 {
     private final String TAG = "MainActivity";
-
-    private static final int REQ_ONE_TAP = 100;
 
     private NavController navController;    //navigation controller
     private Toolbar toolbar;    //toolbar of application

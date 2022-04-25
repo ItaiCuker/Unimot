@@ -16,6 +16,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
 import com.itaicuker.unimot.R;
@@ -31,6 +33,7 @@ public class MainFragment extends Fragment {
     private NavController navController;
 
     private FirebaseFunctions functions;
+    private FirebaseAuth firebaseAuth;
 
 
     @Override
@@ -67,6 +70,21 @@ public class MainFragment extends Fragment {
                           Log.d(TAG, "cloud function result = isSuccessful!");
                    });
         });
+
+        //Initialize Firebase Auth
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        //checking if user is signed in (non-null)
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        updateUI(currentUser);
+    }
+
+    private void updateUI(FirebaseUser currentUser) {
+        Log.d(TAG, String.valueOf(currentUser));
+        if (currentUser == null)  //not signed in
+        {
+            navController.navigate(R.id.landingFragment);
+        }
     }
 
     @Override

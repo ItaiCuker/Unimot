@@ -86,7 +86,7 @@ public class ProvisionConnectFragment extends Fragment {
 
     private HashMap<BluetoothDevice, String> bluetoothDevices; //hash map to bind BluetoothDevice obects with their respective UUID's
 
-    private final ObservableBoolean isRemoteConnected, isConnecting, isScanning;    //booleans for fragment state
+    private final ObservableBoolean isRemoteConnected, isConnecting, isScanning, isLvRemotesEmpty;    //booleans for fragment state
     private boolean isDialogSuccess;
 
     private ESPProvisionManager provisionManager;   //manager singelton for using library
@@ -95,6 +95,7 @@ public class ProvisionConnectFragment extends Fragment {
         isRemoteConnected = new ObservableBoolean(false);
         isConnecting = new ObservableBoolean(false);
         isScanning = new ObservableBoolean(false);
+        isLvRemotesEmpty = new ObservableBoolean(true);
         isDialogSuccess = false;
     }
 
@@ -133,6 +134,7 @@ public class ProvisionConnectFragment extends Fragment {
         binding.setIsConnecting(isConnecting);
         binding.setIsScanning(isScanning);
         binding.setIsRemoteConnected(isRemoteConnected);
+        binding.setIsLvRemotesEmpty(isLvRemotesEmpty);
 
         //initializing sets
         bluetoothDevices = new HashMap<>();
@@ -327,6 +329,7 @@ public class ProvisionConnectFragment extends Fragment {
     private void stopScan() {
 
         isScanning.set(false);
+        isLvRemotesEmpty.set(remoteList.size() <= 0);
 
         if (hasLocationPermissions()) {
             provisionManager.stopBleScan();
@@ -463,6 +466,7 @@ public class ProvisionConnectFragment extends Fragment {
         @Override
         public void scanCompleted() {
             isScanning.set(false);
+            isLvRemotesEmpty.set(remoteList.size() <= 0);
         }
 
         @Override

@@ -14,6 +14,9 @@
         <variable
             name="isRemoteConnected"
             type="androidx.databinding.ObservableBoolean" />
+        <variable
+            name="isLvRemotesEmpty"
+            type="androidx.databinding.ObservableBoolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -54,6 +57,17 @@
             app:layout_constraintStart_toStartOf="@+id/lvRemotes"
             app:layout_constraintTop_toTopOf="@+id/lvRemotes"
             android:visibility="@{isConnecting || isScanning ? View.VISIBLE : View.GONE}"/>
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/lvRemotes"
+            app:layout_constraintEnd_toEndOf="@+id/lvRemotes"
+            app:layout_constraintStart_toStartOf="@+id/lvRemotes"
+            app:layout_constraintTop_toTopOf="@+id/lvRemotes"
+            android:visibility="@{!isScanning &amp;&amp; isLvRemotesEmpty ? View.VISIBLE : View.GONE}"
+            app:srcCompat="@drawable/ic_no_devices" />
 
         <ListView
             android:id="@+id/lvRemotes"
