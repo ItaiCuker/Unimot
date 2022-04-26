@@ -22,14 +22,23 @@
                 android:background="?attr/colorSecondary"
                 app:menu="@menu/group_menu"
                 app:navigationIcon="@drawable/device_group"
+                app:navigationIconTint="?attr/colorOnSecondary"
                 app:title="@string/app_name"
-                app:titleTextAppearance="@style/TextAppearance.Unimot.Headline6" />
+                app:titleTextAppearance="@style/TextAppearance.Unimot.Headline6"
+                app:titleTextColor="?attr/colorOnSecondary"/>
 
-            <GridView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/gvDeviceList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/scrimBackground" />
+                android:background="?attr/colorSurface">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/groupCardDivider"
+                android:layout_width="0dp"
+                android:layout_height="1dp"/>
 
             <TableRow
                 android:layout_width="match_parent"

@@ -7,8 +7,8 @@
     </data>
 
     <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -30,22 +30,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
-                android:text="sdfsdf"
+                android:text="My A/C"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ivDeviceIcon"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/deviceCardDivider"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="4dp"
+                app:layout_constraintStart_toEndOf="@id/tvDeviceName"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/cbFavorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
-                android:button="@drawable/btn_favorite"
-                android:checked="true"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                app:layout_constraintStart_toEndOf="@id/tvDeviceName"
+                android:button="@null"
+                android:foreground="@drawable/btn_favorite"
+                android:foregroundGravity="center"
+                android:checked="false"
+                app:layout_constraintStart_toEndOf="@id/deviceCardDivider"
                 app:layout_constraintTop_toTopOf="parent"
                 app:useMaterialThemeColors="false" />
 
