@@ -1,6 +1,9 @@
 package com.itaicuker.unimot.models;
 
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+
 import com.itaicuker.unimot.R;
 
 /**
@@ -10,6 +13,7 @@ public enum DeviceType {
     AC(R.drawable.device_ac),
     APPLE_TV(R.drawable.device_apple_tv),
     TV(R.drawable.device_tv),
+    SPEAKER(R.drawable.device_speaker),
     PROJECTOR(R.drawable.device_projector);
 
     /**
@@ -28,7 +32,7 @@ public enum DeviceType {
     /**
      * @return resource id of icon
      */
-    public int getIcon() {
-        return icon;
+    public Drawable getIcon(Context context) {
+        return context.getDrawable(icon);
     }
 }

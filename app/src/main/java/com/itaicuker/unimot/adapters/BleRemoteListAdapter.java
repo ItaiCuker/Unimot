@@ -51,4 +51,5 @@ public class BleRemoteListAdapter extends ArrayAdapter<Remote> {
 
         return view;
     }
+
 }

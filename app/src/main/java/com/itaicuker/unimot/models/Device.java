@@ -8,16 +8,16 @@ public class Device {
     /**
      *
      */
-    private final int id;
+    private final String id;
     private String name;
-    private DeviceType type;
     private boolean isFavorite;
+    private DeviceType deviceType;
 
-    public Device(String name, int id, DeviceType type, boolean isFavorite) {
+    public Device(String name, String id, boolean isFavorite, DeviceType deviceType) {
         this.name = name;
         this.id = id;
-        this.type = type;
         this.isFavorite = isFavorite;
+        this.deviceType = deviceType;
     }
 
     public String getName() {
@@ -28,16 +28,8 @@ public class Device {
         this.name = name;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
-    }
-
-    public DeviceType getType() {
-        return type;
-    }
-
-    public void setType(DeviceType type) {
-        this.type = type;
     }
 
     public boolean isFavorite() {
@@ -48,4 +40,11 @@ public class Device {
         isFavorite = favorite;
     }
 
+    public DeviceType getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(DeviceType deviceType) {
+        this.deviceType = deviceType;
+    }
 }

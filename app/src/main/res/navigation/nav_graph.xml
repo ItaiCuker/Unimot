@@ -6,9 +6,9 @@
     app:startDestination="@id/mainFragment">
     <fragment
         android:id="@+id/mainFragment"
+        tools:layout="@layout/fragment_main"
         android:name="com.itaicuker.unimot.fragments.MainFragment"
-        android:label="Unimot"
-        tools:layout="@layout/fragment_main" >
+        android:label="Unimot">
         <action
             android:id="@+id/action_mainFragment_to_provisionConnectFragment"
             app:destination="@id/provisionConnectFragment" />
@@ -40,7 +40,11 @@
         android:id="@+id/provisionStatusFragment"
         android:name="com.itaicuker.unimot.fragments.ProvisionStatusFragment"
         android:label="Status"
-        tools:layout="@layout/fragment_provision_status"/>
+        tools:layout="@layout/fragment_provision_status">
+        <action
+            android:id="@+id/action_provisionSuccess"
+            app:destination="@id/mainFragment" />
+    </fragment>
     <fragment
         android:id="@+id/remoteFragment"
         android:name="com.itaicuker.unimot.fragments.remoteFragment"
@@ -53,9 +57,4 @@
 
     <action android:id="@+id/action_global_remoteDisconnectedDialogFragment"
         app:destination="@id/remoteDisconnectedDialogFragment" />
-    <fragment
-        android:id="@+id/landingFragment"
-        android:name="com.itaicuker.unimot.fragments.LandingFragment"
-        android:label="LandingFragment"
-        tools:layout="@layout/fragment_landing"/>
 </navigation>

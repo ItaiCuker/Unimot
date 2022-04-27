@@ -22,16 +22,15 @@
                 android:background="?attr/colorSecondary"
                 app:menu="@menu/group_menu"
                 app:navigationIcon="@drawable/device_group"
-                app:navigationIconTint="?attr/colorOnSecondary"
-                app:title="@string/app_name"
-                app:titleTextAppearance="@style/TextAppearance.Unimot.Headline6"
-                app:titleTextColor="?attr/colorOnSecondary"/>
+                app:navigationIconTint="?attr/colorOnSecondary" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/gvDeviceList"
+                android:id="@+id/rvDeviceList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorSurface">
+                android:background="?attr/colorSurface"
+                android:backgroundTint="@color/common_google_signin_btn_text_light_disabled"
+                android:minHeight="48dp">
 
             </androidx.recyclerview.widget.RecyclerView>
 
@@ -40,17 +39,20 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"/>
 
-            <TableRow
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <Button
-                    android:id="@+id/textButton"
+                    android:id="@+id/btnAddRemote"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="invite" />
-            </TableRow>
+                    android:text="add"
+                    app:icon="@drawable/ic_baseline_add"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

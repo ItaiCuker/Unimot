@@ -3,10 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-<!--TODO: add data binding to device-->
+        <import type="com.itaicuker.unimot.models.Device"/>
+        <variable
+            name="device"
+            type="Device" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/deviceCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -22,15 +26,14 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/device_ac"
-                android:contentDescription="@string/deviceIcon" />
+                app:src="@{device.deviceType.getIcon(context)}" />
 
             <TextView
                 android:id="@+id/tvDeviceName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
-                android:text="My A/C"
+                android:text="@{device.name}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ivDeviceIcon"
@@ -53,7 +56,7 @@
                 android:button="@null"
                 android:foreground="@drawable/btn_favorite"
                 android:foregroundGravity="center"
-                android:checked="false"
+                android:checked="@{device.favorite}"
                 app:layout_constraintStart_toEndOf="@id/deviceCardDivider"
                 app:layout_constraintTop_toTopOf="parent"
                 app:useMaterialThemeColors="false" />

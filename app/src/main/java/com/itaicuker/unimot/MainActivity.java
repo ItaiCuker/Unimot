@@ -1,7 +1,6 @@
 package com.itaicuker.unimot;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -11,8 +10,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.itaicuker.unimot.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity
@@ -43,6 +40,7 @@ public class MainActivity extends AppCompatActivity
 
         //line to setup my toolbar with nav controller
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+
     }
 
     /**

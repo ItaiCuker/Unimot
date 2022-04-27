@@ -8,18 +8,23 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.ObservableBoolean;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.itaicuker.unimot.R;
+import com.itaicuker.unimot.adapters.DeviceListAdapter;
 import com.itaicuker.unimot.databinding.FragmentMainBinding;
+import com.itaicuker.unimot.viewmodels.DeviceListViewModel;
 
 public class MainFragment extends Fragment {
 
@@ -27,8 +32,13 @@ public class MainFragment extends Fragment {
     private FragmentMainBinding binding;
     private NavController navController;
 
-    private FirebaseAuth firebaseAuth;
+    ObservableBoolean isLoading;
 
+    DeviceListViewModel deviceListViewModel;
+
+    RecyclerView deviceListRecycler;
+    DeviceListAdapter deviceListAdapter;
+    Button btnAdd;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,20 +55,25 @@ public class MainFragment extends Fragment {
 
         navController = Navigation.findNavController(view);
 
-        //Initialize Firebase Auth
-        firebaseAuth = FirebaseAuth.getInstance();
+        //define deviceListViewModel
+        deviceListViewModel = new ViewModelProvider(this).get(DeviceListViewModel.class);
 
-        //checking if user is signed in (non-null)
-        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        updateUI(currentUser);
-    }
+        //isLoading boolean
+        isLoading = new ObservableBoolean(true);
+        binding.setIsLoading(isLoading);
 
-    private void updateUI(FirebaseUser currentUser) {
-        Log.d(TAG, String.valueOf(currentUser));
-        if (currentUser == null)  //not signed in
-        {
-            navController.navigate(R.id.landingFragment);
-        }
+        btnAdd = binding.mainCard.btnAddRemote;
+        deviceListRecycler = binding.mainCard.rvDeviceList;
+        deviceListRecycler.setLayoutManager(new GridLayoutManager(requireActivity(), 2));
+
+        //get device list
+        deviceListViewModel.getDeviceListMutableLiveData().observe(this, deviceList -> {
+            Log.d(TAG, "inside deviceListViewModel observe");
+            deviceListAdapter = new DeviceListAdapter(deviceList);
+            deviceListRecycler.setAdapter(deviceListAdapter);
+            deviceListAdapter.notifyDataSetChanged();
+            isLoading.set(false);
+        });
     }
 
     @Override

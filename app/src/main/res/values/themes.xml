@@ -31,7 +31,7 @@
         <!--and menus. colorError is used to indicate an error state for components such as-->
         <!--text fields.-->
         <item name="android:colorBackground">@color/white_50</item>
-        <item name="colorSurface">#80FFFFFF</item>
+        <item name="colorSurface">@color/white_50</item>
         <item name="colorError">@color/errorLight</item>
         <!--"On" colors define how text, icons and strokes are colored in relation to the surface-->
         <!--on which they appear.-->
