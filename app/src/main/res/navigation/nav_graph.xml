@@ -49,7 +49,7 @@
         android:id="@+id/remoteFragment"
         android:name="com.itaicuker.unimot.fragments.remoteFragment"
         android:label="remoteFragment"
-        tools:layout="@layout/fragment_ir_ac"/>
+        tools:layout="@layout/fragment_remote"/>
     <dialog
         android:id="@+id/remoteDisconnectedDialogFragment"
         android:name="com.itaicuker.unimot.fragments.RemoteDisconnectedDialogFragment"

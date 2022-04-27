@@ -1,9 +1,10 @@
 package com.itaicuker.unimot.models;
 
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
+import androidx.annotation.DrawableRes;
+import androidx.databinding.BindingAdapter;
 
+import com.google.android.material.button.MaterialButton;
 import com.itaicuker.unimot.R;
 
 /**
@@ -19,12 +20,12 @@ public enum DeviceType {
     /**
      * the resource of icon
      */
-    private final int icon;
+    private final @DrawableRes int icon;
 
     /**
      * @param icon resource id of icon
      */
-    DeviceType(int icon) {
+    DeviceType(@DrawableRes int icon) {
 
         this.icon = icon;
     }
@@ -32,7 +33,12 @@ public enum DeviceType {
     /**
      * @return resource id of icon
      */
-    public Drawable getIcon(Context context) {
-        return context.getDrawable(icon);
+    public int getIcon() {
+        return icon;
+    }
+
+    @BindingAdapter("dynamicIcon")
+    public static void setDynamicIcon(MaterialButton button, @DrawableRes int icon) {
+        button.setIconResource(icon);
     }
 }

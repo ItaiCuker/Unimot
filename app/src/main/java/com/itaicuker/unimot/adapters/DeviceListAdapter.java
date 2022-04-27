@@ -1,15 +1,12 @@
 package com.itaicuker.unimot.adapters;
 
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.databinding.BindingAdapter;
-import androidx.databinding.BindingMethod;
-import androidx.databinding.BindingMethods;
-import androidx.databinding.DataBindingUtil;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.itaicuker.unimot.BR;
@@ -40,7 +37,6 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Vi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Device device = deviceList.get(position);
         holder.bind(device);
-        //TODO: add click listener here
     }
 
     @Override
@@ -51,10 +47,6 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Vi
     /**
      * custom viewHolder for material card
      */
-    @BindingMethods({
-            @BindingMethod(type = android.widget.ImageView.class,
-                    attribute = "app:srcCompat",
-                    method = "setImageDrawable") })
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public DeviceCardBinding binding;
 
@@ -62,6 +54,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Vi
             super(binding.getRoot());
             // Define click listener for the ViewHolder's View
             this.binding = binding;
+            binding.btnDevice.setOnClickListener(deviceClickListener);
         }
 
         public void bind(Device device) {
@@ -69,7 +62,11 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Vi
             binding.executePendingBindings();
         }
 
-        //TODO: add click logic
+        private View.OnClickListener deviceClickListener = v -> {
+            //TODO: go to device ui screen
+            NavController navController = Navigation.findNavController(v);
+            navController.navigate(R.id.action_mainFragment_to_remoteFragment);
+        };
 
         public DeviceCardBinding getBinding() {
             return binding;

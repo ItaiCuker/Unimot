@@ -11,55 +11,28 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/deviceCard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/ivDeviceIcon"
-                android:layout_width="wrap_content"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDevice"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.Unimot.Subtitle2"
+                android:textColor="?attr/colorOnBackground"
+                app:iconTint="?attr/colorOnBackground"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                dynamicIcon="@{device.deviceType.icon}"
+                android:text="@{device.name}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:src="@{device.deviceType.getIcon(context)}" />
-
-            <TextView
-                android:id="@+id/tvDeviceName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:text="@{device.name}"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/ivDeviceIcon"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.divider.MaterialDivider
-                android:id="@+id/deviceCardDivider"
-                android:layout_width="1dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="4dp"
-                app:layout_constraintStart_toEndOf="@id/tvDeviceName"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-            <com.google.android.material.checkbox.MaterialCheckBox
-                android:id="@+id/cbFavorite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:button="@null"
-                android:foreground="@drawable/btn_favorite"
-                android:foregroundGravity="center"
-                android:checked="@{device.favorite}"
-                app:layout_constraintStart_toEndOf="@id/deviceCardDivider"
-                app:layout_constraintTop_toTopOf="parent"
-                app:useMaterialThemeColors="false" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

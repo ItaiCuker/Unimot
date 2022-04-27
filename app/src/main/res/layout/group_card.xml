@@ -7,7 +7,7 @@
     </data>
 
     <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
         <LinearLayout
@@ -28,6 +28,7 @@
                 android:id="@+id/rvDeviceList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="8dp"
                 android:background="?attr/colorSurface"
                 android:backgroundTint="@color/common_google_signin_btn_text_light_disabled"
                 android:minHeight="48dp">

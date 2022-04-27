@@ -2,14 +2,9 @@ package com.itaicuker.unimot.repositories;
 
 import android.util.Log;
 
-import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.itaicuker.unimot.models.Device;
 import com.itaicuker.unimot.models.DeviceType;
 
@@ -47,10 +42,10 @@ public class DeviceListRepository {
 //            deviceListMutableLiveData.postValue(blogList);
 //        });
         List<Device> deviceList = new ArrayList<>();
-        deviceList.add(new Device("merry's A/C", "1", true, DeviceType.AC));
-        deviceList.add(new Device("yodan's TV", "2", false, DeviceType.TV));
-        deviceList.add(new Device("guy's projector", "2", false, DeviceType.PROJECTOR));
-        deviceList.add(new Device("michals's Speaker", "2", false, DeviceType.SPEAKER));
+        deviceList.add(new Device("merry's A/C", "1", DeviceType.AC));
+        deviceList.add(new Device("yodan's TV", "2", DeviceType.TV));
+        deviceList.add(new Device("guy's projector", "2", DeviceType.PROJECTOR));
+        deviceList.add(new Device("michal's Speaker", "2", DeviceType.SPEAKER));
         deviceListMutableLiveData.postValue(deviceList);
         return deviceListMutableLiveData;
     }
