@@ -1,23 +1,31 @@
 package com.itaicuker.unimot.models;
 
 
+import androidx.annotation.Nullable;
+
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
 /**
  * represents a device
  */
+@IgnoreExtraProperties
 public class Device {
     /**
      *
      */
-    private final String id;
     private String name;
     private DeviceType deviceType;
 
-    public Device(String name, String id, DeviceType deviceType) {
+    public Device(){
+
+    }
+
+    public Device(@Nullable String name, @Nullable DeviceType deviceType) {
         this.name = name;
-        this.id = id;
         this.deviceType = deviceType;
     }
 
+    @Nullable
     public String getName() {
         return name;
     }
@@ -26,10 +34,7 @@ public class Device {
         this.name = name;
     }
 
-    public String getId() {
-        return id;
-    }
-
+    @Nullable
     public DeviceType getDeviceType() {
         return deviceType;
     }
