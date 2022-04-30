@@ -4,17 +4,17 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.itaicuker.unimot.models.Device;
-import com.itaicuker.unimot.repositories.DeviceRepository;
+import com.itaicuker.unimot.repositories.Repository;
 
 import java.util.List;
 
 public class DeviceListViewModel extends ViewModel {
     LiveData<List<Device>> deviceListMutableLiveData;
-    DeviceRepository repository;
+    Repository repository;
 
     public DeviceListViewModel() {
-        repository = new DeviceRepository();
-        deviceListMutableLiveData = repository.getDeviceListMutableLiveData();
+        repository = new Repository();
+        deviceListMutableLiveData = repository.getDeviceListLiveData();
     }
 
     public LiveData<List<Device>> getDeviceListMutableLiveData() {

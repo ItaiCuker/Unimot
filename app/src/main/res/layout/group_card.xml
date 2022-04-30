@@ -20,7 +20,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorSecondary"
-                app:menu="@menu/group_menu"
                 app:navigationIcon="@drawable/device_group"
                 app:navigationIconTint="?attr/colorOnSecondary" />
 

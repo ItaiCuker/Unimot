@@ -61,6 +61,8 @@ public class MainFragment extends Fragment {
         isLoading = new ObservableBoolean(false);
         binding.setIsLoading(isLoading);
 
+        btnAdd = binding.mainCard.btnAddRemote;
+
         deviceListViewModel = new ViewModelProvider(this).get(DeviceListViewModel.class);
 
         deviceListRecycler = binding.mainCard.rvDeviceList;
@@ -72,6 +74,7 @@ public class MainFragment extends Fragment {
             adapter.notifyDataSetChanged();
         });
 
+        // resetting app bar to main fragment configuration:
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         actionBar.setLogo(null);
         actionBar.setTitle("Unimot");
@@ -86,6 +89,14 @@ public class MainFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         Log.d(TAG, "onOptionsItemSelected");
+        //tied menu item to a navigation destination
         return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item);
     }
+
+    /**
+     * btn add on click listener
+     */
+    private View.OnClickListener btnAddOnClickListener = v -> {
+        //TODO: open add device dialog
+    };
 }

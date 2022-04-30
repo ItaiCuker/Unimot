@@ -2,29 +2,36 @@ package com.itaicuker.unimot.models;
 
 import android.bluetooth.BluetoothDevice;
 
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class Remote
 {
-    private String name;
+    private String id;
     private BluetoothDevice bluetoothDevice;
 
-    public Remote(String name, BluetoothDevice bluetoothDevice) {
-        this.name = name;
+    public Remote() {
+
+    }
+
+    public Remote(String id) {
+        this.id = id;
+    }
+
+    public Remote(String id, BluetoothDevice bluetoothDevice) {
+        this.id = id;
         this.bluetoothDevice = bluetoothDevice;
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public BluetoothDevice getBluetoothDevice() {
         return bluetoothDevice;
-    }
-
-    public void setBluetoothDevice(BluetoothDevice bluetoothDevice) {
-        this.bluetoothDevice = bluetoothDevice;
     }
 }

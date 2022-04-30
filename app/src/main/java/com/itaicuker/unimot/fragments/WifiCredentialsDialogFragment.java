@@ -51,7 +51,7 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
     private ArrayAdapter adapter;
 
     private EditText etPass;
-    private AutoCompleteTextView acetSsid;
+    private AutoCompleteTextView actSsid;
     private Button btnOk, btnCancel;
     
     private ObservableBoolean isScanning;
@@ -78,11 +78,28 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        dialog = (AlertDialog) getDialog();
+        navController = NavHostFragment.findNavController(this);
+
+        //init views
+        actSsid = binding.acetSsid;
+        etPass = binding.etPass;
+        btnOk = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        btnCancel = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+        actSsid.addTextChangedListener(textWatcher);
+        etPass.addTextChangedListener(textWatcher);
+
+        //setting boolean with data binding
+        isScanning = new ObservableBoolean(true);
+        binding.setIsScanning(isScanning);
+
+        //waiting to recieve remotes AP scan
+        btnCancel.setEnabled(false);
+        btnOk.setEnabled(false);
     }
 
-    /**
-     * Remove dialog.
-     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -92,37 +109,16 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
     @Override
     public void onStart() {
         super.onStart();
-        dialog = (AlertDialog) getDialog();
-        navController = NavHostFragment.findNavController(this);
-
-        //init views
-        acetSsid = binding.acetSsid;
-        etPass = binding.etPass;
-        btnOk = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        btnCancel = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-
-        acetSsid.addTextChangedListener(textWatcher);
-        etPass.addTextChangedListener(textWatcher);
-
-        //waiting to recieve remotes AP scan
-        btnCancel.setEnabled(false);
-        btnOk.setEnabled(false);
-
-        //setting boolean with data binding
-        binding.setLifecycleOwner(this);
-        isScanning = new ObservableBoolean(true);
-        binding.setIsScanning(isScanning);
-
 
         //starting scan and getting provisionManager
-        provisionManager = provisionManager.getInstance(requireActivity().getApplicationContext());
+        provisionManager = ESPProvisionManager.getInstance(requireActivity().getApplicationContext());
         startWifiScan();
     }
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
 
-        String ssid = acetSsid.getText().toString();
+        String ssid = actSsid.getText().toString();
         String pass = etPass.getText().toString();
 
         Bundle bundle = new Bundle();
@@ -145,7 +141,7 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             //setting btnOk enabled if inputs are valid
             btnOk.setEnabled(
-                    isValidCredentials(acetSsid.getText().toString(), etPass.getText().toString()));
+                    isValidCredentials(actSsid.getText().toString(), etPass.getText().toString()));
         }
 
         @Override
@@ -206,15 +202,15 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
 
                     //creating and setting adapter
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, listSsids);
-                    acetSsid.setAdapter(adapter);
+                    actSsid.setAdapter(adapter);
 
                     //ensuring drop down visibility:
-                    acetSsid.setOnFocusChangeListener((v, hasFocus) -> {
-                        if (v.getId() == R.id.acetSsid && hasFocus)
-                            acetSsid.showDropDown();
+                    actSsid.setOnFocusChangeListener((v, hasFocus) -> {
+                        if (v.getId() == R.id.actSsid && hasFocus)
+                            actSsid.showDropDown();
                     });
-                    acetSsid.setOnClickListener((v) -> {
-                        acetSsid.showDropDown();
+                    actSsid.setOnClickListener((v) -> {
+                        actSsid.showDropDown();
                     });
                 });
             }

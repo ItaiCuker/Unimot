@@ -109,7 +109,6 @@ public class ProvisionConnectFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //using binding instead of findviewbyid
         binding = FragmentProvisionConnectBinding.inflate(inflater, container, false);
-        binding.setLifecycleOwner(getViewLifecycleOwner());
         setHasOptionsMenu(true);    //line to override options menu.
         return binding.getRoot();
     }
@@ -492,7 +491,7 @@ public class ProvisionConnectFragment extends Fragment {
 
             Remote remote = adapter.getItem(position);
             String uuid = bluetoothDevices.get(remote.getBluetoothDevice());
-            Log.d(TAG, "=================== Connect to remote : " + remote.getName() + " UUID : " + uuid);
+            Log.d(TAG, "=================== Connect to remote : " + remote.getId() + " UUID : " + uuid);
 
             if (hasLocationPermissions()) {
                 provisionManager.getEspDevice().connectBLEDevice(remote.getBluetoothDevice(), uuid);

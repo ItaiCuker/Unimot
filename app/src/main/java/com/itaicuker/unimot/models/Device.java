@@ -1,14 +1,9 @@
 package com.itaicuker.unimot.models;
 
 
-import androidx.annotation.Nullable;
-
-import com.google.firebase.firestore.IgnoreExtraProperties;
-
 /**
  * represents a device
  */
-@IgnoreExtraProperties
 public class Device {
 
     private String uId;
@@ -19,23 +14,20 @@ public class Device {
         //empty constructor for Firestore
     }
 
-    public Device(String uId, @Nullable String name, @Nullable DeviceType deviceType) {
+    public Device(String uId, String name, DeviceType deviceType) {
         this.uId = uId;
         this.name = name;
         this.deviceType = deviceType;
     }
 
-    @Nullable
     public String getuId() {
         return uId;
     }
 
-    @Nullable
     public String getName() {
         return name;
     }
 
-    @Nullable
     public DeviceType getDeviceType() {
         return deviceType;
     }

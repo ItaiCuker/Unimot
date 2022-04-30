@@ -68,7 +68,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
             NavController navController = Navigation.findNavController(v);
             Bundle bundle = new Bundle();
             bundle.putString("uId", uId);
-            navController.navigate(R.id.action_mainFragment_to_remoteFragment, bundle);
+            navController.navigate(R.id.action_mainFragment_to_deviceFragment, bundle);
         };
 
         public DeviceCardBinding getBinding() {

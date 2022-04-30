@@ -13,8 +13,8 @@
             android:id="@+id/action_mainFragment_to_provisionConnectFragment"
             app:destination="@id/provisionConnectFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_remoteFragment"
-            app:destination="@id/remoteFragment" />
+            android:id="@+id/action_mainFragment_to_deviceFragment"
+            app:destination="@id/deviceFragment" />
     </fragment>
 
     <fragment
@@ -46,10 +46,10 @@
             app:destination="@id/mainFragment" />
     </fragment>
     <fragment
-        android:id="@+id/remoteFragment"
-        android:name="com.itaicuker.unimot.fragments.RemoteFragment"
+        android:id="@+id/deviceFragment"
+        android:name="com.itaicuker.unimot.fragments.DeviceFragment"
         android:label=""
-        tools:layout="@layout/fragment_remote"/>
+        tools:layout="@layout/fragment_device"/>
     <dialog
         android:id="@+id/remoteDisconnectedDialogFragment"
         android:name="com.itaicuker.unimot.fragments.RemoteDisconnectedDialogFragment"

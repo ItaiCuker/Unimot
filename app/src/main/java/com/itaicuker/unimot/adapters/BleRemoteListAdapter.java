@@ -47,7 +47,7 @@ public class BleRemoteListAdapter extends ArrayAdapter<Remote> {
         View view = inflater.inflate(R.layout.item_ble_scan, null);
 
         TextView bleDeviceNameText = view.findViewById(R.id.tvBleRemoteName);
-        bleDeviceNameText.setText(remote.getName());
+        bleDeviceNameText.setText(remote.getId());
 
         return view;
     }
