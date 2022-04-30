@@ -66,7 +66,7 @@ public class ProvisionConnectFragment extends Fragment {
     private ListView lvRemotes;
 
     //prefix to filter BLE devices to only unimot
-    private final String prefix = "UNIMOT_";
+    private final String prefix = "UNIMOT-";
     //proof of possession key
     private static final String POP = "unimot";
 
@@ -97,6 +97,12 @@ public class ProvisionConnectFragment extends Fragment {
         isScanning = new ObservableBoolean(false);
         isLvRemotesEmpty = new ObservableBoolean(true);
         isDialogSuccess = false;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);   //registering event handler for provisionManager usage
     }
 
     @Override
@@ -150,8 +156,6 @@ public class ProvisionConnectFragment extends Fragment {
         provisionManager.getEspDevice().setProofOfPossession(POP);
 
         initViews();
-        
-        EventBus.getDefault().register(this);   //registering event handler for provisionManager usage
     }
 
     /**
@@ -174,7 +178,6 @@ public class ProvisionConnectFragment extends Fragment {
         navController.addOnDestinationChangedListener(destinationChangedListener);
         if (!isRemoteConnected.get() && !isConnecting.get())    //starting scan if not started yet
             startScan();
-        navController.navigate(R.id.action_provisionConnectFragment_to_provisionWifiDialogFragment);
         super.onResume();
     }
 
@@ -192,7 +195,7 @@ public class ProvisionConnectFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        if (item.getItemId() == android.R.id.home)  //handling when user pressed back button
+        if (item.getItemId() == android.R.id.home)  //handling user pressed back button
         {
             if (isScanning.get()) {
                 stopScan();
@@ -465,6 +468,7 @@ public class ProvisionConnectFragment extends Fragment {
 
         @Override
         public void scanCompleted() {
+            Log.d(TAG, "scanCompleted");
             isScanning.set(false);
             isLvRemotesEmpty.set(remoteList.size() <= 0);
         }

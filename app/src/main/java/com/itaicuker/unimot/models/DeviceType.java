@@ -2,6 +2,7 @@ package com.itaicuker.unimot.models;
 
 
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
 
 import com.google.android.material.button.MaterialButton;
@@ -33,6 +34,7 @@ public enum DeviceType {
     /**
      * @return resource id of icon
      */
+    @NonNull
     public int getIcon() {
         return icon;
     }

@@ -236,6 +236,7 @@ public class ProvisionStatusFragment extends Fragment {
                     tickChecking.setImageResource(R.drawable.ic_checkbox_on);
                     tickChecking.setVisibility(View.VISIBLE);
                     progChecking.setVisibility(View.INVISIBLE);
+                    //TODO: complete provision - go back to mainFragment
                 });
             }
 

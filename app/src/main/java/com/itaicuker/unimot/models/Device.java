@@ -10,19 +10,24 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
  */
 @IgnoreExtraProperties
 public class Device {
-    /**
-     *
-     */
+
+    private String uId;
     private String name;
     private DeviceType deviceType;
 
     public Device(){
-
+        //empty constructor for Firestore
     }
 
-    public Device(@Nullable String name, @Nullable DeviceType deviceType) {
+    public Device(String uId, @Nullable String name, @Nullable DeviceType deviceType) {
+        this.uId = uId;
         this.name = name;
         this.deviceType = deviceType;
+    }
+
+    @Nullable
+    public String getuId() {
+        return uId;
     }
 
     @Nullable
@@ -30,16 +35,17 @@ public class Device {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Nullable
     public DeviceType getDeviceType() {
         return deviceType;
     }
 
-    public void setDeviceType(DeviceType deviceType) {
-        this.deviceType = deviceType;
+    @Override
+    public String toString() {
+        return "Device {" +
+                "uId='" + uId + '\'' +
+                ", name='" + name + '\'' +
+                ", deviceType=" + deviceType +
+                '}';
     }
 }
