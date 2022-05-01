@@ -13,11 +13,11 @@ public class DeviceListViewModel extends ViewModel {
     Repository repository;
 
     public DeviceListViewModel() {
-        repository = new Repository();
+        repository = Repository.getInstance();
         deviceListMutableLiveData = repository.getDeviceListLiveData();
     }
 
-    public LiveData<List<Device>> getDeviceListMutableLiveData() {
+    public LiveData<List<Device>> getDeviceListLiveData() {
         return deviceListMutableLiveData;
     }
 }

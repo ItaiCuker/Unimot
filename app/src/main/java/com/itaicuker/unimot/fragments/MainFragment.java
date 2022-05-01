@@ -26,7 +26,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.itaicuker.unimot.R;
 import com.itaicuker.unimot.adapters.DeviceListAdapter;
 import com.itaicuker.unimot.databinding.FragmentMainBinding;
+import com.itaicuker.unimot.models.Device;
 import com.itaicuker.unimot.viewModels.DeviceListViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainFragment extends Fragment {
 
@@ -41,6 +45,7 @@ public class MainFragment extends Fragment {
     DeviceListAdapter adapter;
     RecyclerView deviceListRecycler;
     Button btnAdd;
+    List<Device> deviceList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,19 +63,26 @@ public class MainFragment extends Fragment {
         navController = Navigation.findNavController(view);
 
         //isLoading boolean
-        isLoading = new ObservableBoolean(false);
+        isLoading = new ObservableBoolean(true);
         binding.setIsLoading(isLoading);
+        binding.executePendingBindings();
 
         btnAdd = binding.mainCard.btnAddRemote;
+        btnAdd.setOnClickListener(btnAddOnClickListener);
 
         deviceListViewModel = new ViewModelProvider(this).get(DeviceListViewModel.class);
 
         deviceListRecycler = binding.mainCard.rvDeviceList;
         deviceListRecycler.setLayoutManager(new GridLayoutManager(requireActivity(), 2));
 
-        deviceListViewModel.getDeviceListMutableLiveData().observe(this, deviceList -> {
-            adapter = new DeviceListAdapter(deviceList);
-            deviceListRecycler.setAdapter(adapter);
+        deviceList = new ArrayList<>();
+        adapter = new DeviceListAdapter(deviceList);
+        deviceListRecycler.setAdapter(adapter);
+
+        deviceListViewModel.getDeviceListLiveData().observe(this, snapshot -> {
+            isLoading.set(false);
+            deviceList.clear();
+            deviceList.addAll(snapshot);
             adapter.notifyDataSetChanged();
         });
 
@@ -97,6 +109,9 @@ public class MainFragment extends Fragment {
      * btn add on click listener
      */
     private View.OnClickListener btnAddOnClickListener = v -> {
-        //TODO: open add device dialog
+        //navigating to dialog
+        Bundle args = new Bundle();
+        args.putString("config", "Create");
+        navController.navigate(R.id.action_mainFragment_to_ModifyDeviceDialogFragment, args);
     };
 }

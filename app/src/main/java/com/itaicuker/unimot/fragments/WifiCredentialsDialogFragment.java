@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -76,14 +75,20 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
         dialog = (AlertDialog) getDialog();
         navController = NavHostFragment.findNavController(this);
 
         //init views
-        actSsid = binding.acetSsid;
+        actSsid = binding.actSsid;
         etPass = binding.etPass;
         btnOk = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         btnCancel = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
@@ -98,17 +103,6 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
         //waiting to recieve remotes AP scan
         btnCancel.setEnabled(false);
         btnOk.setEnabled(false);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
 
         //starting scan and getting provisionManager
         provisionManager = ESPProvisionManager.getInstance(requireActivity().getApplicationContext());

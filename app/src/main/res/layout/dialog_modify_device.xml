@@ -3,7 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-
+        <import type="androidx.databinding.ObservableBoolean"/>
+        <variable
+            name="isRemoteIdEnabled"
+            type="ObservableBoolean" />
+        <variable
+            name="isDeviceTypeEnabled"
+            type="ObservableBoolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,10 +27,10 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edDeviceName"
+                android:id="@+id/etDeviceName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="name of device" />
+                android:hint="name of device 2-36 characters" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -41,7 +47,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/Widget.MaterialComponents.AutoCompleteTextView.OutlinedBox"
-                android:hint="ID of remote (located on it)" />
+                android:hint="remote ID to send commands to"
+                android:enabled="@{isRemoteIdEnabled}"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -54,44 +61,37 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tilRemoteId">
 
-
-            <TableRow
+            <RadioButton
+                android:id="@+id/rbTV"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TV"
+                android:enabled="@{isDeviceTypeEnabled}"/>
 
-                <RadioButton
-                    android:id="@+id/radioButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="TV" />
-
-                <RadioButton
-                    android:id="@+id/radioButton2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="AC" />
-            </TableRow>
-
-            <TableRow
+            <RadioButton
+                android:id="@+id/rbAC"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="AC"
+                android:enabled="@{isDeviceTypeEnabled}"/>
 
-                <RadioButton
-                    android:id="@+id/radioButton3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Projector" />
+            <RadioButton
+                android:id="@+id/rbPROJECTOR"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Projector"
+                android:enabled="@{isDeviceTypeEnabled}"/>
 
-                <RadioButton
-                    android:id="@+id/radioButton4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Speaker" />
-            </TableRow>
+            <RadioButton
+                android:id="@+id/rbSPEAKER"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Speaker"
+                android:enabled="@{isDeviceTypeEnabled}"/>
 
         </RadioGroup>
 

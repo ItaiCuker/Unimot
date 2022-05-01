@@ -2,19 +2,15 @@ package com.itaicuker.unimot.models;
 
 import android.bluetooth.BluetoothDevice;
 
-import com.google.firebase.firestore.IgnoreExtraProperties;
+import androidx.annotation.NonNull;
 
-@IgnoreExtraProperties
 public class Remote
 {
     private String id;
+    private boolean isOnline;
     private BluetoothDevice bluetoothDevice;
 
-    public Remote() {
-
-    }
-
-    public Remote(String id) {
+    public Remote(String id, boolean isOnline) {
         this.id = id;
     }
 
@@ -33,5 +29,15 @@ public class Remote
 
     public BluetoothDevice getBluetoothDevice() {
         return bluetoothDevice;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return id;
     }
 }

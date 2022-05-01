@@ -1,0 +1,299 @@
+@startuml
+
+title __UNIMOT.APP's Class Diagram__\n
+
+  namespace androidx.databinding {
+    class androidx.databinding.DataBinderMapperImpl {
+    }
+  }
+  
+
+  namespace androidx.databinding {
+    interface androidx.databinding.DataBindingComponent {
+    }
+  }
+  
+
+  namespace androidx.databinding {
+    namespace library.baseAdapters {
+      class androidx.databinding.library.baseAdapters.BR {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    class com.itaicuker.unimot.BR {
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    class com.itaicuker.unimot.BuildConfig {
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    class com.itaicuker.unimot.DataBinderMapperImpl {
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    class com.itaicuker.unimot.MainActivity {
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace adapters {
+      class com.itaicuker.unimot.adapters.BleRemoteListAdapter {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace adapters {
+      class com.itaicuker.unimot.adapters.DeviceListAdapter {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace databinding {
+      class com.itaicuker.unimot.databinding.ActivityMainBindingImpl {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace databinding {
+      class com.itaicuker.unimot.databinding.DeviceCardBindingImpl {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace databinding {
+      class com.itaicuker.unimot.databinding.DialogAddDeviceBindingImpl {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace databinding {
+      class com.itaicuker.unimot.databinding.DialogWifiCredentialsBindingImpl {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace databinding {
+      class com.itaicuker.unimot.databinding.FragmentDeviceBindingImpl {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace databinding {
+      class com.itaicuker.unimot.databinding.FragmentMainBindingImpl {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace databinding {
+      class com.itaicuker.unimot.databinding.FragmentProvisionConnectBindingImpl {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace databinding {
+      class com.itaicuker.unimot.databinding.FragmentProvisionStatusBindingImpl {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace databinding {
+      class com.itaicuker.unimot.databinding.GroupCardBindingImpl {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace fragments {
+      class com.itaicuker.unimot.fragments.DeviceFragment {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace fragments {
+      class com.itaicuker.unimot.fragments.MainFragment {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace fragments {
+      class com.itaicuker.unimot.fragments.ProvisionConnectFragment {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace fragments {
+      class com.itaicuker.unimot.fragments.ProvisionStatusFragment {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace fragments {
+      class com.itaicuker.unimot.fragments.RemoteDisconnectedDialogFragment {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace fragments {
+      class com.itaicuker.unimot.fragments.WifiCredentialsDialogFragment {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace fragments {
+      class com.itaicuker.unimot.fragments.addDeviceDialogFragment {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace models {
+      class com.itaicuker.unimot.models.Device {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace models {
+      enum DeviceType {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace models {
+      class com.itaicuker.unimot.models.Remote {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace repositories {
+      class com.itaicuker.unimot.repositories.Repository {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace viewModels {
+      class com.itaicuker.unimot.viewModels.DeviceListViewModel {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace viewModels {
+      class com.itaicuker.unimot.viewModels.DeviceViewModel {
+      }
+    }
+  }
+  
+
+  namespace com.itaicuker.unimot {
+    namespace viewModels {
+      class com.itaicuker.unimot.viewModels.RemoteListViewModel {
+      }
+    }
+  }
+  
+
+  androidx.databinding.DataBinderMapperImpl -up-|> androidx.databinding.MergedDataBinderMapper
+  com.itaicuker.unimot.DataBinderMapperImpl -up-|> androidx.databinding.DataBinderMapper
+  com.itaicuker.unimot.MainActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.itaicuker.unimot.adapters.BleRemoteListAdapter -up-|> android.widget.ArrayAdapter
+  com.itaicuker.unimot.adapters.DeviceListAdapter -up-|> androidx.recyclerview.widget.RecyclerView.Adapter
+  com.itaicuker.unimot.databinding.ActivityMainBindingImpl -up-|> com.itaicuker.unimot.databinding.ActivityMainBinding
+  com.itaicuker.unimot.databinding.DeviceCardBindingImpl -up-|> com.itaicuker.unimot.databinding.DeviceCardBinding
+  com.itaicuker.unimot.databinding.DialogAddDeviceBindingImpl -up-|> com.itaicuker.unimot.databinding.DialogAddDeviceBinding
+  com.itaicuker.unimot.databinding.DialogWifiCredentialsBindingImpl -up-|> com.itaicuker.unimot.databinding.DialogWifiCredentialsBinding
+  com.itaicuker.unimot.databinding.FragmentDeviceBindingImpl -up-|> com.itaicuker.unimot.databinding.FragmentDeviceBinding
+  com.itaicuker.unimot.databinding.FragmentMainBindingImpl -up-|> com.itaicuker.unimot.databinding.FragmentMainBinding
+  com.itaicuker.unimot.databinding.FragmentProvisionConnectBindingImpl -up-|> com.itaicuker.unimot.databinding.FragmentProvisionConnectBinding
+  com.itaicuker.unimot.databinding.FragmentProvisionStatusBindingImpl -up-|> com.itaicuker.unimot.databinding.FragmentProvisionStatusBinding
+  com.itaicuker.unimot.databinding.GroupCardBindingImpl -up-|> com.itaicuker.unimot.databinding.GroupCardBinding
+  com.itaicuker.unimot.fragments.DeviceFragment -up-|> androidx.fragment.app.Fragment
+  com.itaicuker.unimot.fragments.DeviceFragment o-- com.itaicuker.unimot.databinding.FragmentDeviceBinding : binding
+  com.itaicuker.unimot.fragments.DeviceFragment o-- com.itaicuker.unimot.models.Device : device
+  com.itaicuker.unimot.fragments.DeviceFragment o-- com.itaicuker.unimot.viewModels.DeviceViewModel : deviceViewModel
+  com.itaicuker.unimot.fragments.MainFragment -up-|> androidx.fragment.app.Fragment
+  com.itaicuker.unimot.fragments.MainFragment o-- com.itaicuker.unimot.adapters.DeviceListAdapter : adapter
+  com.itaicuker.unimot.fragments.MainFragment o-- com.itaicuker.unimot.viewModels.DeviceListViewModel : deviceListViewModel
+  com.itaicuker.unimot.fragments.MainFragment o-- com.itaicuker.unimot.databinding.FragmentMainBinding : binding
+  com.itaicuker.unimot.fragments.ProvisionConnectFragment -up-|> androidx.fragment.app.Fragment
+  com.itaicuker.unimot.fragments.ProvisionConnectFragment o-- com.itaicuker.unimot.adapters.BleRemoteListAdapter : adapter
+  com.itaicuker.unimot.fragments.ProvisionConnectFragment o-- com.itaicuker.unimot.databinding.FragmentProvisionConnectBinding : binding
+  com.itaicuker.unimot.fragments.ProvisionStatusFragment -up-|> androidx.fragment.app.Fragment
+  com.itaicuker.unimot.fragments.ProvisionStatusFragment o-- com.itaicuker.unimot.databinding.FragmentProvisionStatusBinding : binding
+  com.itaicuker.unimot.fragments.RemoteDisconnectedDialogFragment -up-|> androidx.fragment.app.DialogFragment
+  com.itaicuker.unimot.fragments.WifiCredentialsDialogFragment .up.|> android.content.DialogInterface.OnClickListener
+  com.itaicuker.unimot.fragments.WifiCredentialsDialogFragment -up-|> androidx.fragment.app.DialogFragment
+  com.itaicuker.unimot.fragments.WifiCredentialsDialogFragment o-- com.itaicuker.unimot.databinding.DialogWifiCredentialsBinding : binding
+  com.itaicuker.unimot.fragments.addDeviceDialogFragment -up-|> androidx.fragment.app.DialogFragment
+  com.itaicuker.unimot.fragments.addDeviceDialogFragment o-- com.itaicuker.unimot.databinding.DialogAddDeviceBinding : binding
+  com.itaicuker.unimot.fragments.addDeviceDialogFragment o-- com.itaicuker.unimot.viewModels.RemoteListViewModel : remoteListViewModel
+  com.itaicuker.unimot.models.Device o-- com.itaicuker.unimot.models.DeviceType : deviceType
+  com.itaicuker.unimot.viewModels.DeviceListViewModel -up-|> androidx.lifecycle.ViewModel
+  com.itaicuker.unimot.viewModels.DeviceListViewModel o-- com.itaicuker.unimot.repositories.Repository : repository
+  com.itaicuker.unimot.viewModels.DeviceViewModel -up-|> androidx.lifecycle.ViewModel
+  com.itaicuker.unimot.viewModels.DeviceViewModel o-- com.itaicuker.unimot.repositories.Repository : repository
+  com.itaicuker.unimot.viewModels.RemoteListViewModel -up-|> androidx.lifecycle.ViewModel
+  com.itaicuker.unimot.viewModels.RemoteListViewModel o-- com.itaicuker.unimot.repositories.Repository : repository
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

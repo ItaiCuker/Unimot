@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.itaicuker.unimot.R;
 import com.itaicuker.unimot.databinding.FragmentDeviceBinding;
 import com.itaicuker.unimot.models.Device;
@@ -54,7 +55,10 @@ public class DeviceFragment extends Fragment
         deviceLiveData = deviceViewModel.getDeviceMutableLiveData(uId);
         deviceLiveData.observe(this, device -> {
             this.device = device;
-            if (device != null) {   //device probably no longer exists
+            if (device == null) {   //device probably no longer exists
+                Log.d(TAG, "device = null");
+            }
+            else {
                 Log.d(TAG, device.toString());
                 ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
                 actionBar.setLogo(device.getDeviceType().getIcon());
@@ -72,14 +76,26 @@ public class DeviceFragment extends Fragment
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.deviceEdit:
-                //TODO: open dialog to edit a device
-                break;
-            case R.id.deviceDelete:
-                //TODO: open dialog to delete a device
-                break;
+        if (item.getItemId() == R.id.deviceEdit) { //user pressed edit button
+            //navigating to modifyDevice dialog with edit config
+            Bundle args = new Bundle();
+            args.putString("config", "Edit");
+            args.putSerializable("device", device);
+            navController.navigate(R.id.action_deviceFragment_to_ModifyDeviceDialogFragment, args);
         }
-        return true;
+        else if (item.getItemId() == R.id.deviceDelete) { //user pressed delete button
+            //creating alert dialog to warn user
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+            builder
+                    .setTitle("Are you sure you want to delete device?")
+                    .setPositiveButton("confirm", (dialog, which) -> {
+                        deviceViewModel.deleteDevice();
+                        navController.navigateUp();
+                    })
+                    .setNegativeButton("cancel", ((dialog, which) -> dialog.dismiss()))
+                    .create()
+                    .show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

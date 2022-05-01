@@ -3,18 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mainFragment">
+    app:startDestination="@id/MainFragment">
     <fragment
-        android:id="@+id/mainFragment"
+        android:id="@+id/MainFragment"
         tools:layout="@layout/fragment_main"
         android:name="com.itaicuker.unimot.fragments.MainFragment"
         android:label="Unimot">
         <action
-            android:id="@+id/action_mainFragment_to_provisionConnectFragment"
+            android:id="@+id/action_MainFragment_to_ProvisionConnectFragment"
             app:destination="@id/provisionConnectFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_deviceFragment"
+            android:id="@+id/action_mainFragment_to_DeviceFragment"
             app:destination="@id/deviceFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_ModifyDeviceDialogFragment"
+            app:destination="@id/ModifyDeviceDialogFragment" />
     </fragment>
 
     <fragment
@@ -43,13 +46,17 @@
         tools:layout="@layout/fragment_provision_status">
         <action
             android:id="@+id/action_provisionSuccess"
-            app:destination="@id/mainFragment" />
+            app:destination="@id/MainFragment" />
     </fragment>
     <fragment
         android:id="@+id/deviceFragment"
         android:name="com.itaicuker.unimot.fragments.DeviceFragment"
         android:label=""
-        tools:layout="@layout/fragment_device"/>
+        tools:layout="@layout/fragment_device">
+        <action
+            android:id="@+id/action_deviceFragment_to_ModifyDeviceDialogFragment"
+            app:destination="@id/ModifyDeviceDialogFragment" />
+    </fragment>
     <dialog
         android:id="@+id/remoteDisconnectedDialogFragment"
         android:name="com.itaicuker.unimot.fragments.RemoteDisconnectedDialogFragment"
@@ -57,4 +64,9 @@
 
     <action android:id="@+id/action_global_remoteDisconnectedDialogFragment"
         app:destination="@id/remoteDisconnectedDialogFragment" />
+    <dialog
+        android:id="@+id/ModifyDeviceDialogFragment"
+        android:name="com.itaicuker.unimot.fragments.ModifyDeviceDialogFragment"
+        android:label="ModifyDeviceDialogFragment"
+        tools:layout="@layout/dialog_modify_device"/>
 </navigation>

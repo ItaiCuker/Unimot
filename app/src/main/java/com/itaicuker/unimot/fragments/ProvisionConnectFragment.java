@@ -127,6 +127,7 @@ public class ProvisionConnectFragment extends Fragment {
 
         //getting Bluetooth manager adapter
         final BluetoothManager bluetoothManager = (BluetoothManager) requireContext().getApplicationContext().getSystemService(Context.BLUETOOTH_SERVICE);
+        Log.d(TAG, bluetoothManager.toString());
         bleAdapter = bluetoothManager.getAdapter();
 
         // Checks if Bluetooth is supported on this device.

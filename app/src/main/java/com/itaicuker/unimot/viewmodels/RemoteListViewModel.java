@@ -13,7 +13,7 @@ public class RemoteListViewModel extends ViewModel {
     Repository repository;
 
     public RemoteListViewModel() {
-        repository = new Repository();
+        repository = Repository.getInstance();
         RemoteListMutableLiveData = repository.getRemoteListLiveData();
     }
 

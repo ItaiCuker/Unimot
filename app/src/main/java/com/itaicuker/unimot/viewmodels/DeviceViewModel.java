@@ -9,16 +9,31 @@ import com.itaicuker.unimot.repositories.Repository;
 public class DeviceViewModel extends ViewModel {
 
     private static final String TAG = "DeviceViewModel";
-    private LiveData<Device> deviceMutableLiveData;
+    private LiveData<Device> deviceLiveData;
     private Repository repository;
 
     public DeviceViewModel() {
-        repository = new Repository();
+        repository = Repository.getInstance();
     }
 
+    /**
+     *
+     * @param uId id of device
+     * @return live data of device
+     */
     public LiveData<Device> getDeviceMutableLiveData(String uId) {
-        if (deviceMutableLiveData == null)  //first time
-            deviceMutableLiveData = repository.getDeviceLiveData(uId);
-        return deviceMutableLiveData;
+        deviceLiveData = repository.getDeviceLiveData(uId);
+        return deviceLiveData;
+    }
+
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        repository.stopListeningSingleDevice();
+    }
+
+    public void deleteDevice() {
+        repository.deleteDevice(deviceLiveData.getValue().getuId());
     }
 }

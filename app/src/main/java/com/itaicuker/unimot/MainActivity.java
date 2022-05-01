@@ -11,6 +11,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.itaicuker.unimot.databinding.ActivityMainBinding;
+import com.itaicuker.unimot.repositories.Repository;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -19,6 +20,8 @@ public class MainActivity extends AppCompatActivity
     private NavController navController;    //navigation controller
     private Toolbar toolbar;    //toolbar of application
     private AppBarConfiguration appBarConfiguration;    //configuration object so i can interact with toolbar using navigation graph
+
+    Repository repository;  //singelton repository
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -41,6 +44,17 @@ public class MainActivity extends AppCompatActivity
         //line to setup my toolbar with nav controller
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
+
+        //starting listen to DB
+        repository = Repository.getInstance();
+        repository.startListening();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //stopping listen to DB
+        repository.stopListening();
     }
 
     /**
