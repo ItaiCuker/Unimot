@@ -44,9 +44,14 @@ public class MainActivity extends AppCompatActivity
         //line to setup my toolbar with nav controller
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-
         //starting listen to DB
-        repository = Repository.getInstance();
+        repository = Repository.createInstance(this); //passing context for toasts
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //start listening db
         repository.startListening();
     }
 

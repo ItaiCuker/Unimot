@@ -54,4 +54,5 @@
     <string name="error_network_not_found">Network not found.</string>
     <string name="btn_signUp">Sign Up</string>
     <string name="btn_signIn">Sign In</string>
+    <string name="device_exists">Device with these fields already exists</string>
 </resources>

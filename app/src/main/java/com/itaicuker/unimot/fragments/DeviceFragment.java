@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -56,7 +57,8 @@ public class DeviceFragment extends Fragment
         deviceLiveData.observe(this, device -> {
             this.device = device;
             if (device == null) {   //device probably no longer exists
-                Log.d(TAG, "device = null");
+                navController.navigateUp();
+                Toast.makeText(requireActivity(), "device no longer exists", Toast.LENGTH_LONG).show();
             }
             else {
                 Log.d(TAG, device.toString());
@@ -90,7 +92,6 @@ public class DeviceFragment extends Fragment
                     .setTitle("Are you sure you want to delete device?")
                     .setPositiveButton("confirm", (dialog, which) -> {
                         deviceViewModel.deleteDevice();
-                        navController.navigateUp();
                     })
                     .setNegativeButton("cancel", ((dialog, which) -> dialog.dismiss()))
                     .create()

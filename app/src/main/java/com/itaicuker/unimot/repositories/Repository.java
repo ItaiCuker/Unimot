@@ -1,6 +1,8 @@
 package com.itaicuker.unimot.repositories;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -13,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.itaicuker.unimot.R;
 import com.itaicuker.unimot.models.Device;
 import com.itaicuker.unimot.models.DeviceType;
 import com.itaicuker.unimot.models.Remote;
@@ -30,25 +33,29 @@ public class Repository {
             .setPersistenceEnabled(false)
             .build();
 
-    private static FirebaseFirestore db;
-    private static CollectionReference deviceCollection;
-    private static CollectionReference remoteCollection;
+    private final Context context;
 
-    private static MutableLiveData<List<Device>> deviceListMutableLiveData;
-    private static MutableLiveData<List<Remote>> remoteListMutableLiveData;
-    private static MutableLiveData<Device> deviceMutableLiveData;
+    private final CollectionReference deviceCollection;
+    private final CollectionReference remoteCollection;
 
-    private static ListenerRegistration deviceCollectionReg;
-    private static ListenerRegistration remoteCollectionReg;
-    private static ListenerRegistration singleDeviceReg;
+    private MutableLiveData<List<Device>> deviceListMutableLiveData;
+    private MutableLiveData<List<Remote>> remoteListMutableLiveData;
+    private MutableLiveData<Device> deviceMutableLiveData;
+
+    private ListenerRegistration deviceCollectionReg;
+    private ListenerRegistration remoteCollectionReg;
+    private ListenerRegistration singleDeviceReg;
 
 
     /**
      * singleton getter
+     * @param context
      */
-    private Repository()
+    private Repository(Context context)
     {
-        db = FirebaseFirestore.getInstance();
+        this.context = context;
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.setFirestoreSettings(settings);
         deviceCollection = db.collection("devices");
         remoteCollection = db.collection("remotes");
@@ -57,9 +64,13 @@ public class Repository {
         remoteListMutableLiveData = new MutableLiveData<>();
     }
 
-    public static Repository getInstance() {
+    public static Repository createInstance(Context context) {
         if (self == null)
-            self = new Repository();
+            self = new Repository(context);
+        return self;
+    }
+
+    public static Repository getInstance() {
         return self;
     }
 
@@ -109,13 +120,13 @@ public class Repository {
      * @param uId unique id of device in DB
      * @return device live data
      */
-    public LiveData<Device> getDeviceLiveData(String uId) {
-        if (deviceMutableLiveData == null)
+    public MutableLiveData<Device> getDeviceLiveData(String uId) {
+        if (deviceMutableLiveData == null || deviceMutableLiveData.getValue() == null)
             deviceMutableLiveData = new MutableLiveData<>();
 
         singleDeviceReg = deviceCollection.document(uId).addSnapshotListener(singleDeviceSnapshotListener);
-            return deviceMutableLiveData;
-        }
+        return deviceMutableLiveData;
+    }
 
     /**
      * listener to devices collection
@@ -153,36 +164,23 @@ public class Repository {
      * listener to single device
      */
     private final EventListener<DocumentSnapshot> singleDeviceSnapshotListener = (doc, error) -> {
-        if (doc != null){
+        if (doc != null)
             deviceMutableLiveData.postValue(docToDevice(doc));
-        }
         else
             Log.e(TAG, error.toString());
     };
-
-    /**
-     *
-     * @param doc firestore document
-     * @return parsed document in device form
-     */
-    private Device docToDevice(DocumentSnapshot doc){
-         return new Device(
-                 doc.getId(),
-                 doc.getString("name"),
-                 DeviceType.valueOf(doc.getString("deviceType").toUpperCase()),
-                 doc.getString("remoteId"),
-                 doc.getBoolean("isOnline")
-         );
-    }
 
     /**
      * create a device in db
      * @param map with device fields to create.
      */
     public void createDevice(Map map) {
-        deviceCollection.add(map)
-                .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot created with ID: " + documentReference.getId()))
-                .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+        if (!deviceExists(map))
+            deviceCollection.add(map)
+                    .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot created with ID: " + documentReference.getId()))
+                    .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+        else
+            Toast.makeText(context, R.string.device_exists, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -191,9 +189,12 @@ public class Repository {
      * @param uId UID of document in Firestore
      */
     public void editDevice(Map map, String uId) {
+        if (!deviceExists(map))
         deviceCollection.document(uId).set(map)
                 .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot edited with ID: " + uId))
                 .addOnFailureListener(e -> Log.w(TAG, "Error editing document", e));
+        else
+            Toast.makeText(context, R.string.device_exists, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -204,5 +205,48 @@ public class Repository {
         deviceCollection.document(uId).delete()
                 .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot deleted with ID: " + uId))
                 .addOnFailureListener(e -> Log.w(TAG, "Error deleting document", e));
+    }
+
+    /**
+     *
+     * @param map of device fields
+     * @return true if device exists in deviceListMutableLiveData
+     */
+    private boolean deviceExists(Map map) {
+        return deviceListMutableLiveData.getValue()
+                .stream()
+                .anyMatch(device -> isDeviceMap(device, map));
+    }
+
+    /**
+     *
+     * @param device to check
+     * @param map to check
+     * @return true if device has the same fields as map, false otherwise
+     */
+    public boolean isDeviceMap(Device device, Map map) {
+        return  device.getDeviceType().name().equals(map.get("deviceType")) &&
+                device.getName().equals(map.get("name")) &&
+                device.getRemoteId().equals(map.get("remoteId"));
+    }
+
+    /**
+     *
+     * @param doc firestore document
+     * @return parsed document Device, null if document doesn't exist
+     */
+    private Device docToDevice(DocumentSnapshot doc){
+        Device device = null;
+        if (doc.exists())
+            device = new Device(
+                    doc.getId(),
+                    doc.getString("name"),
+                    DeviceType.valueOf(doc.getString("deviceType").toUpperCase()),
+                    doc.getString("remoteId"),
+                    doc.getBoolean("isOnline")
+            );
+        else
+            Log.w(TAG, "doc doesn't exist");
+        return device;
     }
 }

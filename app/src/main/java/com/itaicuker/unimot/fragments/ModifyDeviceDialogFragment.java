@@ -147,10 +147,11 @@ public class ModifyDeviceDialogFragment extends DialogFragment
             map.put("name", deviceName);
             map.put("remoteId", remoteId);
 
+            Repository repository = Repository.getInstance();
             if (config.equals("Create"))
-                Repository.getInstance().createDevice(map);
-            else
-                Repository.getInstance().editDevice(map, device.getuId());
+                repository.createDevice(map);
+            else if (!repository.isDeviceMap(device, map))  //checking if device wasn't edited
+                repository.editDevice(map, device.getuId());
         }
     };
 
