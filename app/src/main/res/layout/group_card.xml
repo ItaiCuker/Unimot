@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:background="?attr/colorSurface"
-                android:backgroundTint="@color/common_google_signin_btn_text_light_disabled"
+                android:backgroundTint="@color/background_tint"
                 android:minHeight="48dp">
 
             </androidx.recyclerview.widget.RecyclerView>

@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.itaicuker.unimot.Repository;
 import com.itaicuker.unimot.models.Device;
-import com.itaicuker.unimot.repositories.Repository;
 
 public class DeviceViewModel extends ViewModel {
 

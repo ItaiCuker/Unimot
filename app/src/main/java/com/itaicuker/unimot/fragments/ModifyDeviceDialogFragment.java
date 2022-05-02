@@ -21,10 +21,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.itaicuker.unimot.Repository;
 import com.itaicuker.unimot.databinding.DialogModifyDeviceBinding;
 import com.itaicuker.unimot.models.Device;
 import com.itaicuker.unimot.models.Remote;
-import com.itaicuker.unimot.repositories.Repository;
 import com.itaicuker.unimot.viewModels.RemoteListViewModel;
 
 import java.util.ArrayList;

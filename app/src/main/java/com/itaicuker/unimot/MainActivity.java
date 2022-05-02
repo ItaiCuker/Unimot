@@ -1,5 +1,7 @@
 package com.itaicuker.unimot;
 
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,7 +13,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.itaicuker.unimot.databinding.ActivityMainBinding;
-import com.itaicuker.unimot.repositories.Repository;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -20,6 +21,8 @@ public class MainActivity extends AppCompatActivity
     private NavController navController;    //navigation controller
     private Toolbar toolbar;    //toolbar of application
     private AppBarConfiguration appBarConfiguration;    //configuration object so i can interact with toolbar using navigation graph
+
+    NetworkChangeReciever br;   //network broadcast reciever
 
     Repository repository;  //singelton repository
 
@@ -44,8 +47,18 @@ public class MainActivity extends AppCompatActivity
         //line to setup my toolbar with nav controller
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
+        //registering network change broadcast receiver
+        br = new NetworkChangeReciever(this, navController);
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(br, filter);
+
         //starting listen to DB
         repository = Repository.createInstance(this); //passing context for toasts
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override
@@ -60,6 +73,8 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
         //stopping listen to DB
         repository.stopListening();
+        //unregister NetworkChangeReceiver
+        unregisterReceiver(br);
     }
 
     /**

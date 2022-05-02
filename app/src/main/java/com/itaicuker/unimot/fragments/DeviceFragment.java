@@ -8,12 +8,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.BindingAdapter;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -26,6 +28,9 @@ import com.itaicuker.unimot.databinding.FragmentDeviceBinding;
 import com.itaicuker.unimot.models.Device;
 import com.itaicuker.unimot.viewModels.DeviceViewModel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DeviceFragment extends Fragment
 {
     private static final String TAG = "DeviceFragment";
@@ -35,8 +40,10 @@ public class DeviceFragment extends Fragment
     LiveData<Device> deviceLiveData;
     DeviceViewModel deviceViewModel;
 
-    Device device;
+    ActionBar actionBar;
+    Map<Button, Boolean> buttons;
 
+    Device device;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -50,10 +57,28 @@ public class DeviceFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
 
+        buttons = new HashMap<>();
+        for (int i = 1; i < 16; i++) {
+            int id = getResources().getIdentifier("cmd" + i, "id", requireActivity().getPackageName());
+            Button btn = binding.getRoot().findViewById(id);
+            btn.setOnLongClickListener(longClickListener);
+            btn.setOnClickListener(clickListener);
+            buttons.put(btn, false);
+        }
+
+        binding.cmd1.setOnLongClickListener(v -> {
+            Log.d(TAG, "onLongClickListener");
+            return false;
+        });
+
+        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+
         String uId = getArguments().getString("uId");
 
+        //getting observable device live data
         deviceViewModel = new ViewModelProvider(this).get(DeviceViewModel.class);
         deviceLiveData = deviceViewModel.getDeviceMutableLiveData(uId);
+        //observing it
         deviceLiveData.observe(this, device -> {
             this.device = device;
             if (device == null) {   //device probably no longer exists
@@ -62,12 +87,20 @@ public class DeviceFragment extends Fragment
             }
             else {
                 Log.d(TAG, device.toString());
-                ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-                actionBar.setLogo(device.getDeviceType().getIcon());
-                actionBar.setTitle(device.getName());
+                updateUI();
             }
 
         });
+    }
+
+    private void updateUI() {
+
+        //updating action bar
+        actionBar.setTitle(device.getName());
+        actionBar.setLogo(device.getDeviceType().getIcon());
+
+        //setting alpha for all buttons
+        buttons.forEach(DeviceFragment::setAlpha);
     }
 
     @Override
@@ -99,4 +132,26 @@ public class DeviceFragment extends Fragment
         }
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * setting view alpha based on boolean
+     * @param view to set alpha for
+     * @param flag determinate
+     */
+    public static void setAlpha(View view, boolean flag) {
+        view.setAlpha(flag ? .25f : 1f);
+    }
+
+    private View.OnClickListener clickListener = v -> {
+        //TODO:
+    };
+
+    private View.OnLongClickListener longClickListener = (v) -> {
+        Bundle args = new Bundle();
+        args.putString("config", buttons.get(v) ? "Create" : "Edit");
+        args.putString("cmd", (String) v.getTag());
+        //TODO: create modify command dialog
+//        navController.navigate()
+        return false;
+    };
 }

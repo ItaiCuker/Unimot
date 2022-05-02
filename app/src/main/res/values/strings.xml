@@ -46,11 +46,12 @@
     <string name="prov_step_applying_text">Applying Wi-Fi connection</string>
     <string name="prov_step_checking_text">Checking provisioning status</string>
     <string name="error_session_creation">Failed to create session</string>
-    <string name="dialog_msg_ble_device_disconnection">Device disconnected</string>
-    <string name="error_prov_step_sending">Failed to send Wi-Fi credentials</string>
-    <string name="error_prov_step_applying">Failed to apply Wi-Fi credentials</string>
-    <string name="error_prov_step_checking">Failed to provisioning device</string>
+    <string name="dialog_msg_ble_device_disconnection">Device disconnected.</string>
+    <string name="error_prov_step_sending">Failed to send Wi-Fi credentials.</string>
+    <string name="error_prov_step_applying">Failed to apply Wi-Fi credentials.</string>
+    <string name="error_prov_step_checking">Failed to provision remote.</string>
     <string name="error_authentication_failed">Wi-Fi Authentication failed.</string>
+    <string name="alert_reset_remote"> Reset Remote</string>
     <string name="error_network_not_found">Network not found.</string>
     <string name="btn_signUp">Sign Up</string>
     <string name="btn_signIn">Sign In</string>

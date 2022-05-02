@@ -124,7 +124,6 @@ public class ProvisionConnectFragment extends Fragment {
             Toast.makeText(getActivity(), R.string.error_ble_not_supported, Toast.LENGTH_LONG).show();
             navController.navigateUp();
         }
-
         //getting Bluetooth manager adapter
         final BluetoothManager bluetoothManager = (BluetoothManager) requireContext().getApplicationContext().getSystemService(Context.BLUETOOTH_SERVICE);
         Log.d(TAG, bluetoothManager.toString());
@@ -290,7 +289,7 @@ public class ProvisionConnectFragment extends Fragment {
 
                 isConnecting.set(false);
                 isRemoteConnected.set(false);
-                navController.navigate(R.id.action_global_remoteDisconnectedDialogFragment);
+//                navController.navigate(R.id.action_global_remoteDisconnectedDialogFragment);
                 break;
 
             case ESPConstants.EVENT_DEVICE_CONNECTION_FAILED:
