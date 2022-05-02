@@ -43,11 +43,7 @@
         android:id="@+id/provisionStatusFragment"
         android:name="com.itaicuker.unimot.fragments.ProvisionStatusFragment"
         android:label="Status"
-        tools:layout="@layout/fragment_provision_status">
-        <action
-            android:id="@+id/action_provisionSuccess"
-            app:destination="@id/MainFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_provision_status"/>
     <fragment
         android:id="@+id/deviceFragment"
         android:name="com.itaicuker.unimot.fragments.DeviceFragment"
@@ -69,4 +65,9 @@
         android:name="com.itaicuker.unimot.fragments.ModifyDeviceDialogFragment"
         android:label="ModifyDeviceDialogFragment"
         tools:layout="@layout/dialog_modify_device"/>
+    <action
+        android:id="@+id/action_global_MainFragment"
+        app:destination="@id/MainFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
 </navigation>

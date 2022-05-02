@@ -167,6 +167,7 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
 
             case ESPConstants.EVENT_DEVICE_DISCONNECTED:
                 if (!isRemoving()) {
+                    dismiss();
                     navController.navigate(R.id.action_global_remoteDisconnectedDialogFragment);
                 }
                 break;

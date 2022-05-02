@@ -1,4 +1,4 @@
-package com.itaicuker.unimot.repositories;
+package com.itaicuker.unimot;
 
 import android.content.Context;
 import android.util.Log;
@@ -15,12 +15,12 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.itaicuker.unimot.R;
 import com.itaicuker.unimot.models.Device;
 import com.itaicuker.unimot.models.DeviceType;
 import com.itaicuker.unimot.models.Remote;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -232,21 +232,34 @@ public class Repository {
 
     /**
      *
-     * @param doc firestore document
+     * @param doc Firestore document
      * @return parsed document Device, null if document doesn't exist
      */
     private Device docToDevice(DocumentSnapshot doc){
         Device device = null;
-        if (doc.exists())
+        if (doc.exists()) {
             device = new Device(
                     doc.getId(),
                     doc.getString("name"),
                     DeviceType.valueOf(doc.getString("deviceType").toUpperCase()),
                     doc.getString("remoteId"),
-                    doc.getBoolean("isOnline")
+                    doc.getBoolean("isOnline"),
+                    commandDocToMap((HashMap) doc.get("commands"))
             );
+        }
         else
             Log.w(TAG, "doc doesn't exist");
         return device;
+    }
+
+    private Map<String, Boolean> commandDocToMap(HashMap<String, Object> map) {
+        HashMap<String, Boolean> retMap = null;
+
+        if (map != null) {  //creating new map with String name of command and boolean if array command is not empty
+            retMap = new HashMap<>();
+            HashMap<String, Boolean> finalRetMap = retMap;
+            map.forEach((k, v) -> finalRetMap.put(k, v != null));
+        }
+        return retMap;
     }
 }

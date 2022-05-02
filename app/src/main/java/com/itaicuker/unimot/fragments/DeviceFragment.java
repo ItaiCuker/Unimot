@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,9 @@ import com.itaicuker.unimot.databinding.FragmentDeviceBinding;
 import com.itaicuker.unimot.models.Device;
 import com.itaicuker.unimot.viewModels.DeviceViewModel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DeviceFragment extends Fragment
 {
     private static final String TAG = "DeviceFragment";
@@ -34,6 +38,9 @@ public class DeviceFragment extends Fragment
 
     LiveData<Device> deviceLiveData;
     DeviceViewModel deviceViewModel;
+
+    ActionBar actionBar;
+    Map<Button, Boolean> buttons;
 
     Device device;
 
@@ -50,6 +57,16 @@ public class DeviceFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
 
+        buttons = new HashMap<>();
+        for (int i = 1; i < 16; i++) {
+            int id = getResources().getIdentifier("cmd" + i, "id", requireActivity().getPackageName());
+            Button btn = binding.getRoot().findViewById(id);
+            buttons.put(btn, false);
+        }
+
+
+        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+
         String uId = getArguments().getString("uId");
 
         deviceViewModel = new ViewModelProvider(this).get(DeviceViewModel.class);
@@ -62,12 +79,17 @@ public class DeviceFragment extends Fragment
             }
             else {
                 Log.d(TAG, device.toString());
-                ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-                actionBar.setLogo(device.getDeviceType().getIcon());
-                actionBar.setTitle(device.getName());
+                updateUI();
             }
 
         });
+    }
+
+    private void updateUI() {
+
+        //updating action bar
+        actionBar.setTitle(device.getName());
+        actionBar.setLogo(device.getDeviceType().getIcon());
     }
 
     @Override

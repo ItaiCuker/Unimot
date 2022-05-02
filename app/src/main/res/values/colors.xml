@@ -64,5 +64,6 @@
 
     <!--Color outline-->
     <color name="outline">#f0efef</color>
+    <color name="background_tint">#1F000000</color>
 
 </resources>

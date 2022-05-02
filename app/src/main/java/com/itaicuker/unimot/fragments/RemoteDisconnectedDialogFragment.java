@@ -18,7 +18,7 @@ public class RemoteDisconnectedDialogFragment extends DialogFragment {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
         setCancelable(false);
         builder.setTitle(R.string.error_title);
-        builder.setMessage(R.string.dialog_msg_ble_device_disconnection);
+        builder.setMessage(R.string.dialog_msg_ble_device_disconnection + R.string.alert_reset_remote);
 
         // Set up the buttons
         builder.setPositiveButton(R.string.btn_ok, (dialog, which) -> {

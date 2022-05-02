@@ -2,6 +2,7 @@ package com.itaicuker.unimot.models;
 
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * represents a device
@@ -13,17 +14,19 @@ public class Device implements Serializable {
     private DeviceType deviceType;
     private String remoteId;
     private boolean isOnline;
+    private Map<String, Boolean> commands;
 
     public Device(){
         //empty constructor for Firestore
     }
 
-    public Device(String uId, String name, DeviceType deviceType, String remoteId, boolean isOnline) {
+    public Device(String uId, String name, DeviceType deviceType, String remoteId, boolean isOnline, Map<String, Boolean> commands) {
         this.uId = uId;
         this.name = name;
         this.deviceType = deviceType;
         this.remoteId = remoteId;
         this.isOnline = isOnline;
+        this.commands = commands;
     }
 
     public String getuId() {
@@ -66,12 +69,23 @@ public class Device implements Serializable {
         isOnline = online;
     }
 
+    public Map<String, Boolean> getCommands() {
+        return commands;
+    }
+
+    public void setCommands(Map<String, Boolean> commands) {
+        this.commands = commands;
+    }
+
     @Override
     public String toString() {
-        return "Device {" +
+        return "Device{" +
                 "uId='" + uId + '\'' +
                 ", name='" + name + '\'' +
                 ", deviceType=" + deviceType +
+                ", remoteId='" + remoteId + '\'' +
+                ", isOnline=" + isOnline +
+                ", commands=" + commands +
                 '}';
     }
 }

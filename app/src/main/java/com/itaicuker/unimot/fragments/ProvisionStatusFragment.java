@@ -17,6 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.widget.ContentLoadingProgressBar;
+import androidx.databinding.ObservableBoolean;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -49,8 +50,7 @@ public class ProvisionStatusFragment extends Fragment {
     private String ssid, pass;
 
     //state of provisioning
-    private boolean isProvisioningCompleted = false;
-
+    private ObservableBoolean isProvCompleted;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,6 +71,12 @@ public class ProvisionStatusFragment extends Fragment {
         ssid = bundle.getString("ssid");
         pass = bundle.getString("pass");
 
+        isProvCompleted = new ObservableBoolean(false);
+        binding.setIsProvCompleted(isProvCompleted);
+
+        //on button finish click navigate back to main
+        binding.btnFinish.setOnClickListener(v ->
+                navController.navigate(R.id.action_global_MainFragment));
 
         provisionManager = ESPProvisionManager.getInstance(requireContext().getApplicationContext());
 
@@ -122,7 +128,7 @@ public class ProvisionStatusFragment extends Fragment {
         switch (event.getEventType()) {
 
             case ESPConstants.EVENT_DEVICE_DISCONNECTED:
-                if (!isRemoving() && !isProvisioningCompleted) {
+                if (!isRemoving() && !isProvCompleted.get()) {
                     navController.navigate(R.id.action_global_remoteDisconnectedDialogFragment);
                 }
                 break;
@@ -210,14 +216,14 @@ public class ProvisionStatusFragment extends Fragment {
                 requireActivity().runOnUiThread(() -> {
                     switch (failureReason) {    //setting error message
                         case AUTH_FAILED:
-                            tvProvError.setText(R.string.error_authentication_failed);
+                            tvProvError.setText(R.string.error_authentication_failed + R.string.alert_reset_remote);
                             break;
                         case NETWORK_NOT_FOUND:
-                            tvProvError.setText(R.string.error_network_not_found);
+                            tvProvError.setText(R.string.error_network_not_found + R.string.alert_reset_remote);
                             break;
                         case DEVICE_DISCONNECTED:
                         case UNKNOWN:
-                            tvProvError.setText(R.string.error_prov_step_checking);
+                            tvProvError.setText(R.string.error_prov_step_checking + R.string.alert_reset_remote);
                             break;
                     }
                     //setting ui to wifi provisioning failed from device failed state
@@ -230,13 +236,12 @@ public class ProvisionStatusFragment extends Fragment {
             @Override
             public void deviceProvisioningSuccess() {
                 //using Ui thread
+                isProvCompleted.set(true);
                 requireActivity().runOnUiThread(() -> {
                     //setting ui to success state
-                    isProvisioningCompleted = true;
                     tickChecking.setImageResource(R.drawable.ic_checkbox_on);
                     tickChecking.setVisibility(View.VISIBLE);
                     progChecking.setVisibility(View.INVISIBLE);
-                    //TODO: complete provision - go back to mainFragment
                 });
             }
 
@@ -252,9 +257,5 @@ public class ProvisionStatusFragment extends Fragment {
                 });
             }
         });
-    }
-
-    private void showAlertForDeviceDisconnected() {
-
     }
 }
