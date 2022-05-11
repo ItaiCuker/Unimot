@@ -18,12 +18,23 @@ import com.itaicuker.unimot.models.Device;
 
 import java.util.List;
 
+/**
+ * The Device list adapter.
+ */
 public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.DeviceHolder> {
 
-    private static final String TAG = "DeviceListAdapter";
+    private static final String TAG = "UNIMOT: " + DeviceListAdapter.class.getSimpleName();
 
+    /**
+     * The Device list.
+     */
     List<Device> deviceList;
 
+    /**
+     * Instantiates a new Device list adapter.
+     *
+     * @param deviceList the device list
+     */
     public DeviceListAdapter(List<Device> deviceList) {
         this.deviceList = deviceList;
     }
@@ -47,32 +58,46 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
         return deviceList == null ? 0 : deviceList.size();
     }
 
+    /**
+     * The type Device holder.
+     */
     public static class DeviceHolder extends RecyclerView.ViewHolder {
+        /**
+         * The Binding.
+         */
         public DeviceCardBinding binding;
-        public String uId;  //firestore unique id of device
+        /**
+         * The Id.
+         */
+        public String id;  // Firestore unique id of device
 
-        public DeviceHolder(DeviceCardBinding binding) {
+        /**
+         * Instantiates a new Device holder.
+         *
+         * @param binding the binding
+         */
+        public DeviceHolder(@NonNull DeviceCardBinding binding) {
             super(binding.getRoot());
-            // Define click listener for the DeviceHolder's View
             this.binding = binding;
+            //on click for device card
+            View.OnClickListener deviceClickListener = v -> {
+                NavController navController = Navigation.findNavController(v);
+                Bundle bundle = new Bundle();
+                bundle.putString("id", id);
+                navController.navigate(R.id.action_mainFragment_to_DeviceFragment, bundle);
+            };
             binding.btnDevice.setOnClickListener(deviceClickListener);
         }
 
-        public void bind(Device device) {
-            uId = device.getuId();
+        /**
+         * Bind device to view using dataBinding
+         *
+         * @param device the device to bind
+         */
+        public void bind(@NonNull Device device) {
+            id = device.getId();
             binding.setVariable(BR.device, device);
             binding.executePendingBindings();
-        }
-
-        private View.OnClickListener deviceClickListener = v -> {
-            NavController navController = Navigation.findNavController(v);
-            Bundle bundle = new Bundle();
-            bundle.putString("uId", uId);
-            navController.navigate(R.id.action_mainFragment_to_DeviceFragment, bundle);
-        };
-
-        public DeviceCardBinding getBinding() {
-            return binding;
         }
     }
 }

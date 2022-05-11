@@ -27,11 +27,21 @@ import com.itaicuker.unimot.models.Remote;
 
 import java.util.ArrayList;
 
+/**
+ * The ArrayAdapter<Remote> Ble remote list adapter.
+ */
 public class BleRemoteListAdapter extends ArrayAdapter<Remote> {
 
-    private Context context;
-    private ArrayList<Remote> bluetoothRemotes;
+    private final Context context;
+    private final ArrayList<Remote> bluetoothRemotes;
 
+    /**
+     * Instantiates a new Ble remote list adapter.
+     *
+     * @param context          the context
+     * @param resource         the resource
+     * @param bluetoothRemotes the bluetooth remotes list
+     */
     public BleRemoteListAdapter(Context context, int resource, ArrayList<Remote> bluetoothRemotes) {
         super(context, resource, bluetoothRemotes);
         this.context = context;

@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content">
 
                 <Button
-                    android:id="@+id/btnAddRemote"
+                    android:id="@+id/btnAdd"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

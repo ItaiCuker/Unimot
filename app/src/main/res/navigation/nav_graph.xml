@@ -52,6 +52,9 @@
         <action
             android:id="@+id/action_deviceFragment_to_ModifyDeviceDialogFragment"
             app:destination="@id/ModifyDeviceDialogFragment" />
+        <action
+            android:id="@+id/action_deviceFragment_to_learnCommandDialogFragment"
+            app:destination="@id/learnCommandDialogFragment" />
     </fragment>
     <dialog
         android:id="@+id/remoteDisconnectedDialogFragment"
@@ -64,10 +67,15 @@
         android:id="@+id/ModifyDeviceDialogFragment"
         android:name="com.itaicuker.unimot.fragments.ModifyDeviceDialogFragment"
         android:label="ModifyDeviceDialogFragment"
-        tools:layout="@layout/dialog_modify_device"/>
+        tools:layout="@layout/dialog_modify_device" />
     <action
         android:id="@+id/action_global_MainFragment"
         app:destination="@id/MainFragment"
         app:popUpTo="@id/nav_graph"
         app:popUpToInclusive="true" />
+    <dialog
+        android:id="@+id/learnCommandDialogFragment"
+        android:name="com.itaicuker.unimot.fragments.LearnCommandDialogFragment"
+        android:label="LearnCommandDialogFragment"
+        tools:layout="@layout/dialog_learn_command" />
 </navigation>

@@ -1,5 +1,6 @@
 package com.itaicuker.unimot.models;
 
+import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -9,82 +10,137 @@ import java.util.Map;
  */
 public class Device implements Serializable {
 
-    private String uId;
+    private final String remoteId;
     private String name;
     private DeviceType deviceType;
-    private String remoteId;
-    private boolean isOnline;
-    private Map<String, Boolean> commands;
+    private String id;
+    private boolean isAvailable;
+    private Map<String, String> commands;
 
-    public Device(){
-        //empty constructor for Firestore
-    }
-
-    public Device(String uId, String name, DeviceType deviceType, String remoteId, boolean isOnline, Map<String, Boolean> commands) {
-        this.uId = uId;
+    /**
+     * Instantiates a new Device.
+     *
+     * @param id          the id
+     * @param name        the name
+     * @param deviceType  the device type
+     * @param remoteId    the remote id
+     * @param isAvailable the is available
+     * @param commands    the commands
+     */
+    public Device(String id, String name, DeviceType deviceType, String remoteId, boolean isAvailable, Map<String, String> commands) {
+        this.id = id;
         this.name = name;
         this.deviceType = deviceType;
         this.remoteId = remoteId;
-        this.isOnline = isOnline;
+        this.isAvailable = isAvailable;
         this.commands = commands;
     }
 
-    public String getuId() {
-        return uId;
+    /**
+     * constructor for device list.
+     *
+     * @param id         the id
+     * @param name       the name
+     * @param remoteId   the remote id
+     * @param deviceType the device type
+     */
+    public Device(String id, String name, DeviceType deviceType, String remoteId) {
+        this.id = id;
+        this.name = name;
+        this.deviceType = deviceType;
+        this.remoteId = remoteId;
     }
 
-    public void setuId(String uId) {
-        this.uId = uId;
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
+    public String getId() {
+        return id;
     }
 
+    /**
+     * Sets id.
+     *
+     * @param id the id
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets name.
+     *
+     * @param name the name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets device type.
+     *
+     * @return the device type
+     */
     public DeviceType getDeviceType() {
         return deviceType;
     }
 
+    /**
+     * Sets device type.
+     *
+     * @param deviceType the device type
+     */
     public void setDeviceType(DeviceType deviceType) {
         this.deviceType = deviceType;
     }
 
+    /**
+     * Gets remote id.
+     *
+     * @return the remote id
+     */
     public String getRemoteId() {
         return remoteId;
     }
 
-    public void setRemoteId(String remoteId) {
-        this.remoteId = remoteId;
+    /**
+     * Is available boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isAvailable() {
+        return isAvailable;
     }
 
-    public boolean isOnline() {
-        return isOnline;
-    }
-
-    public void setOnline(boolean online) {
-        isOnline = online;
-    }
-
-    public Map<String, Boolean> getCommands() {
+    /**
+     * Gets commands.
+     *
+     * @return the commands
+     */
+    public Map<String, String> getCommands() {
         return commands;
     }
 
-    public void setCommands(Map<String, Boolean> commands) {
-        this.commands = commands;
-    }
-
+    @NonNull
     @Override
     public String toString() {
         return "Device{" +
-                "uId='" + uId + '\'' +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", deviceType=" + deviceType +
                 ", remoteId='" + remoteId + '\'' +
-                ", isOnline=" + isOnline +
+                ", isAvailable=" + isAvailable +
                 ", commands=" + commands +
                 '}';
     }

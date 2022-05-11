@@ -13,24 +13,40 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.itaicuker.unimot.databinding.ActivityMainBinding;
+import com.itaicuker.unimot.listeners.NetworkChangeReceiver;
 
-public class MainActivity extends AppCompatActivity
-{
-    private final String TAG = "MainActivity";
+/**
+ * The AppCompatActivity Main activity.
+ */
+public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "UNIMOT: " + MainActivity.class.getSimpleName();
 
-    private NavController navController;    //navigation controller
-    private Toolbar toolbar;    //toolbar of application
-    private AppBarConfiguration appBarConfiguration;    //configuration object so i can interact with toolbar using navigation graph
+    /**
+     * The Nav controller.
+     */
+    NavController navController;
+    /**
+     * The Toolbar.
+     */
+    Toolbar toolbar;
+    /**
+     * The App bar configuration.
+     */
+    AppBarConfiguration appBarConfiguration;
 
-    NetworkChangeReciever br;   //network broadcast reciever
+    /**
+     * The network broadcast receiver.
+     */
+    NetworkChangeReceiver br;
 
-    Repository repository;  //singelton repository
+    /**
+     * The Repository.
+     */
+    Repository repository;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //using binding instead of findviewbyid
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         //getting navController
@@ -48,39 +64,21 @@ public class MainActivity extends AppCompatActivity
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
         //registering network change broadcast receiver
-        br = new NetworkChangeReciever(this, navController);
+        br = new NetworkChangeReceiver(this, navController);
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(br, filter);
 
         //starting listen to DB
-        repository = Repository.createInstance(this); //passing context for toasts
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //start listening db
-        repository.startListening();
+        repository = Repository.createInstance(this); //passing context for toasts and listening
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //stopping listen to DB
-        repository.stopListening();
         //unregister NetworkChangeReceiver
         unregisterReceiver(br);
     }
 
-    /**
-     * documentation requires override of this.
-     * @return navigate up successful
-     */
     @Override
     public boolean onSupportNavigateUp() {
         return NavigationUI.navigateUp(navController, appBarConfiguration)

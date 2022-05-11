@@ -21,8 +21,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.espressif.provisioning.DeviceConnectionEvent;
-import com.espressif.provisioning.ESPConstants;
 import com.espressif.provisioning.ESPProvisionManager;
 import com.espressif.provisioning.WiFiAccessPoint;
 import com.espressif.provisioning.listeners.WiFiScanListener;
@@ -30,31 +28,135 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.itaicuker.unimot.R;
 import com.itaicuker.unimot.databinding.DialogWifiCredentialsBinding;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class WifiCredentialsDialogFragment extends DialogFragment implements DialogInterface.OnClickListener
-{
+/**
+ * The DialogFragment Wifi credentials dialog fragment.
+ */
+public class WifiCredentialsDialogFragment extends DialogFragment {
+    /**
+     * The constant REQUEST_WIFI_CREDENTIALS.
+     */
     public static final String REQUEST_WIFI_CREDENTIALS = "4";
-    private static final String TAG = "WifiCredentialsDialogFragment";
+    private static final String TAG = "UNIMOT: " + WifiCredentialsDialogFragment.class.getSimpleName();
+    /**
+     * The Binding.
+     */
+    DialogWifiCredentialsBinding binding;
+    /**
+     * The Provision manager.
+     */
+    ESPProvisionManager provisionManager;
 
-    private DialogWifiCredentialsBinding binding;
-    private ESPProvisionManager provisionManager;
+    /**
+     * The Dialog.
+     */
+    @Nullable
+    AlertDialog dialog;
 
-    private AlertDialog dialog;
+    /**
+     * The EditText pass.
+     */
+    EditText etPass;
+    /**
+     * The AutoCompleteTextView ssid.
+     */
+    AutoCompleteTextView actSsid;
+    private final DialogInterface.OnClickListener dialogClickListener = ((dialog, which) -> {
+        String ssid = actSsid.getText().toString();
+        String pass = etPass.getText().toString();
 
-    private ArrayAdapter adapter;
+        Bundle bundle = new Bundle();
+        //if dialog wasn't canceled
+        if (!TextUtils.isEmpty(ssid + pass)) {
+            bundle.putString("ssid", ssid);
+            bundle.putString("pass", pass);
+        }
 
-    private EditText etPass;
-    private AutoCompleteTextView actSsid;
-    private Button btnOk, btnCancel;
-    
-    private ObservableBoolean isScanning;
-    private NavController navController;
+        dismiss();
+        requireActivity().getSupportFragmentManager().setFragmentResult(REQUEST_WIFI_CREDENTIALS, bundle);
+    });
+    /**
+     * The Btn send.
+     */
+    Button btnSend;
+    private final TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            //setting btnSend enabled if inputs are valid
+            btnSend.setEnabled(
+                    isValidCredentials(actSsid.getText().toString(), etPass.getText().toString()));
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+    /**
+     * The Btn cancel.
+     */
+    Button btnCancel;
+    /**
+     * The Is scanning.
+     */
+    ObservableBoolean isScanning;
+    /**
+     * Wifi Scan Listener
+     */
+    private final WiFiScanListener wifiScanListener = new WiFiScanListener() {
+        @Override
+        public void onWifiListReceived(@NonNull ArrayList<WiFiAccessPoint> wifiList) {
+            Log.d(TAG, "AccessPoints recieved");
+
+            //using Ui thread
+            requireActivity().runOnUiThread(() -> {
+                //enabling cancel and changing state
+                btnCancel.setEnabled(true);
+                btnSend.setEnabled(true);
+                isScanning.set(false);
+
+                //getting list of ssid's in AutoCompleteTextView:
+                List<String> listSsids = new ArrayList<>();   //converting WiFiAccessPoint list to String list with SSID values
+                for (WiFiAccessPoint accessPoint : wifiList)
+                    listSsids.add(accessPoint.getWifiName());
+
+                //creating and setting adapter
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, listSsids);
+                actSsid.setAdapter(adapter);
+
+                //ensuring drop down visibility:
+                actSsid.setOnFocusChangeListener((v, hasFocus) -> {
+                    if (v.getId() == R.id.actSsid && hasFocus)
+                        actSsid.showDropDown();
+                });
+                actSsid.setOnClickListener((v) -> {
+                    actSsid.showDropDown();
+                });
+            });
+        }
+
+        @Override
+        public void onWiFiScanFailed(Exception e) {
+            //using Ui thread
+            requireActivity().runOnUiThread(() -> {//scan failed, continuing anyways
+                //enabling cancel and changing state
+                btnCancel.setEnabled(true);
+                btnSend.setEnabled(true);
+                isScanning.set(false);
+            });
+        }
+    };
+    /**
+     * The Nav controller.
+     */
+    NavController navController;
 
     @NonNull
     @Override
@@ -65,19 +167,13 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
         //build dialog
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
         builder.setMessage(R.string.dialog_provision_wifi)
-                .setPositiveButton(R.string.provision_new_remote, this)
-                .setNegativeButton(R.string.cancel, this)
+                .setPositiveButton(R.string.provision_new_remote, dialogClickListener)
+                .setNegativeButton(R.string.cancel, dialogClickListener)
                 .setView(binding.getRoot());
         setCancelable(false);
 
         // Create the AlertDialog object and return it
         return builder.create();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -90,9 +186,10 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
         //init views
         actSsid = binding.actSsid;
         etPass = binding.etPass;
-        btnOk = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        btnSend = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         btnCancel = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
 
+        //add text changed listeners
         actSsid.addTextChangedListener(textWatcher);
         etPass.addTextChangedListener(textWatcher);
 
@@ -100,49 +197,14 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
         isScanning = new ObservableBoolean(true);
         binding.setIsScanning(isScanning);
 
-        //waiting to recieve remotes AP scan
+        //waiting to receive remotes AP scan
         btnCancel.setEnabled(false);
-        btnOk.setEnabled(false);
+        btnSend.setEnabled(false);
 
-        //starting scan and getting provisionManager
+        //starting wifi scan
         provisionManager = ESPProvisionManager.getInstance(requireActivity().getApplicationContext());
         startWifiScan();
     }
-
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-
-        String ssid = actSsid.getText().toString();
-        String pass = etPass.getText().toString();
-
-        Bundle bundle = new Bundle();
-        if (!TextUtils.isEmpty(ssid + pass)){
-            bundle.putString("ssid", ssid);
-            bundle.putString("pass", pass);
-        }
-
-        requireActivity().getSupportFragmentManager().setFragmentResult(REQUEST_WIFI_CREDENTIALS, bundle);
-        dismiss();
-    }
-
-    private final TextWatcher textWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            //setting btnOk enabled if inputs are valid
-            btnOk.setEnabled(
-                    isValidCredentials(actSsid.getText().toString(), etPass.getText().toString()));
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-        }
-    };
 
     /**
      * validating ssid and pass.
@@ -153,74 +215,18 @@ public class WifiCredentialsDialogFragment extends DialogFragment implements Dia
      * ssid - between 2-32 characters.
      * pass - between 8-63 characters.
      */
-    private boolean isValidCredentials(String ssid, String pass) {
+    private boolean isValidCredentials(@NonNull String ssid, @NonNull String pass) {
         return ssid.length() >= 2 && ssid.length() <= 32 &&
                 pass.length() >= 8 & pass.length() <= 63;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(DeviceConnectionEvent event) {
-
-        Log.d(TAG, "On Device Connection Event RECEIVED : " + event.getEventType());
-
-        switch (event.getEventType()) {
-
-            case ESPConstants.EVENT_DEVICE_DISCONNECTED:
-                if (!isRemoving()) {
-                    dismiss();
-                    navController.navigate(R.id.action_global_remoteDisconnectedDialogFragment);
-                }
-                break;
-        }
-    }
-
+    /**
+     * Start Wifi Scan
+     */
     private void startWifiScan() {
         Log.d(TAG, "Start WiFi scan");
 
-        EventBus.getDefault().register(this);   //registering event handler
-        provisionManager.getEspDevice().scanNetworks(new WiFiScanListener() {
-            @Override
-            public void onWifiListReceived(ArrayList<WiFiAccessPoint> wifiList) {
-                Log.d(TAG, "AccessPoints recieved");
-
-                //using Ui thread
-                requireActivity().runOnUiThread(() -> {
-                    //enabling cancel and changing state
-                    btnCancel.setEnabled(true);
-                    btnOk.setEnabled(true);
-                    isScanning.set(false);
-
-                    //getting list of ssid's in AutoCompleteTextView:
-                    List<String> listSsids = new ArrayList<>();   //converting WiFiAccessPoint list to String list with SSID values
-                    for (WiFiAccessPoint accessPoint: wifiList)
-                        listSsids.add(accessPoint.getWifiName());
-
-                    //creating and setting adapter
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, listSsids);
-                    actSsid.setAdapter(adapter);
-
-                    //ensuring drop down visibility:
-                    actSsid.setOnFocusChangeListener((v, hasFocus) -> {
-                        if (v.getId() == R.id.actSsid && hasFocus)
-                            actSsid.showDropDown();
-                    });
-                    actSsid.setOnClickListener((v) -> {
-                        actSsid.showDropDown();
-                    });
-                });
-            }
-
-            @Override
-            public void onWiFiScanFailed(Exception e) {
-                //using Ui thread
-                requireActivity().runOnUiThread(() -> {//scan failed, continuing anyways
-                    //enabling cancel and changing state
-                    btnCancel.setEnabled(true);
-                    btnOk.setEnabled(true);
-                    isScanning.set(false);
-                });
-            }
-        });
+        //registering event handler
+        provisionManager.getEspDevice().scanNetworks(wifiScanListener);
     }
-
 }
