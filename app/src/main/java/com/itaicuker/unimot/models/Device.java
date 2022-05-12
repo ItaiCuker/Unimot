@@ -10,12 +10,30 @@ import java.util.Map;
  */
 public class Device implements Serializable {
 
-    private final String remoteId;
-    private String name;
-    private DeviceType deviceType;
-    private String id;
-    private boolean isAvailable;
-    private Map<String, String> commands;
+    /**
+     * The Remote id.
+     */
+    final String remoteId;
+    /**
+     * The Name.
+     */
+    String name;
+    /**
+     * The Device type.
+     */
+    DeviceType deviceType;
+    /**
+     * The Id.
+     */
+    String id;
+    /**
+     * The Is available.
+     */
+    boolean isAvailable;
+    /**
+     * The Commands.
+     */
+    Map<String, String> commands;
 
     /**
      * Instantiates a new Device.
@@ -41,8 +59,8 @@ public class Device implements Serializable {
      *
      * @param id         the id
      * @param name       the name
-     * @param remoteId   the remote id
      * @param deviceType the device type
+     * @param remoteId   the remote id
      */
     public Device(String id, String name, DeviceType deviceType, String remoteId) {
         this.id = id;

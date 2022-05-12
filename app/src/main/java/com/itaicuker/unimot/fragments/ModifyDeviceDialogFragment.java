@@ -105,7 +105,7 @@ public class ModifyDeviceDialogFragment extends DialogFragment {
             if (config.equals("Create"))
                 repository.createDevice(map);
             else if (!repository.compareDeviceToMap(device, map))  //checking if device wasn't edited
-                repository.editDevice(map, device.getId());
+                repository.editDevice(map);
         }
     };
 

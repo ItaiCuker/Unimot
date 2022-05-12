@@ -60,7 +60,7 @@ public class DeviceViewModel extends ViewModel {
      * Delete.
      */
     public void delete() {
-        repository.deleteDevice(deviceMutableLiveData.getValue().getId(), deviceMutableLiveData.getValue().getCommands());
+        repository.deleteDevice(deviceMutableLiveData.getValue().getCommands());
         deviceMutableLiveData.postValue(null);
     }
 
@@ -71,7 +71,7 @@ public class DeviceViewModel extends ViewModel {
      * @param commandName
      */
     public void deleteCommand(String commandId, String commandName) {
-        repository.deleteCommand(commandId, commandName, deviceMutableLiveData.getValue().getId());
+        repository.deleteCommand(commandId, commandName);
     }
 
     /**

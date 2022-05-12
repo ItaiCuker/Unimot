@@ -22,7 +22,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     private static final String TAG = "UNIMOT: " + NetworkChangeReceiver.class.getSimpleName();
 
     private final NavController navController;
-    private final Activity parent;
+    private final Activity activity;
 
     private Dialog dialog;
     private boolean wasConnected;
@@ -30,12 +30,12 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     /**
      * Instantiates a new Network change receiver.
      *
-     * @param parent        the parent
+     * @param activity      the activity
      * @param navController the nav controller
      */
-    public NetworkChangeReceiver(Activity parent, NavController navController) {
+    public NetworkChangeReceiver(Activity activity, NavController navController) {
         super();
-        this.parent = parent;
+        this.activity = activity;
         this.navController = navController;
     }
 
@@ -47,7 +47,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         if (!isConnected) {
             //navigating to main and starting reconnect dialog
             navController.navigate(R.id.action_global_MainFragment);
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(parent);
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
             builder.setTitle("Alert!")
                     .setMessage("Phone is offline, please reconnect")
                     .setCancelable(false);

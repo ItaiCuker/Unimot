@@ -19,7 +19,6 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.functions.FirebaseFunctions;
-import com.google.firebase.functions.HttpsCallableReference;
 import com.itaicuker.unimot.models.Device;
 import com.itaicuker.unimot.models.DeviceType;
 import com.itaicuker.unimot.models.Remote;
@@ -45,37 +44,69 @@ public class Repository {
      * The Activity.
      */
     final Activity activity;
-
-    /**
-     * The Send command function reference.
-     */
-    final HttpsCallableReference sendCommandFuncRef;
-
     /**
      * The Commands collection.
      */
     final CollectionReference commandsCollection;
 
     /**
+     * The Functions reference.
+     */
+    final FirebaseFunctions functions;
+    /**
      * The Device collection.
      */
     final CollectionReference deviceCollection;
-    /**
-     * The Device collection registration.
-     */
-    final ListenerRegistration deviceCollectionReg;
-    /**
-     * The Remote collection registration.
-     */
-    final ListenerRegistration remoteCollectionReg;
     /**
      * The Remote collection.
      */
     final CollectionReference remoteCollection;
     /**
-     * The Device list mutable live data.
+     * listener single remote
      */
-    MutableLiveData<List<Device>> deviceListMutableLiveData;
+    private final EventListener<DocumentSnapshot> remoteSnapshotListener = (doc, error) -> {
+        if (doc != null) {
+            String learningState = doc.getString("state");
+            Log.d(TAG, "state: " + learningState);
+            switch (learningState) {
+                case "start":
+                    remoteLearnListener.onEvent(Remote.Event.LEARN_START);
+                    break;
+                case "gotCode":
+                    remoteLearnListener.onEvent(Remote.Event.LEARN_REMOTE_RECEIVED_COMMAND);
+                    break;
+                case "tested":
+                    remoteLearnListener.onEvent(Remote.Event.LEARN_REMOTE_TESTED_COMMAND);
+                    break;
+                case "":
+                    if (isListenStart)
+                        remoteLearnListener.onEvent(Remote.Event.LEARN_END);
+                    else
+                        isListenStart = true;
+                    break;
+            }
+        } else
+            Log.e(TAG, error.toString());
+    };
+    /**
+     * The Remote list mutable live data.
+     */
+    MutableLiveData<List<Remote>> remoteListMutableLiveData;
+    /**
+     * listener to remotes collection
+     */
+    private final EventListener<QuerySnapshot> remoteCollectionSnapshotListener = (value, error) -> {
+        if (value != null) {
+            List<Remote> remoteList = new ArrayList<>();
+            for (QueryDocumentSnapshot doc : value) {
+                if (doc != null) {
+                    remoteList.add(new Remote(doc.getId(), doc.getBoolean("isOnline")));
+                }
+            }
+            remoteListMutableLiveData.postValue(remoteList);
+        } else
+            Log.e(TAG, error.toString());
+    };
     /**
      * listener to devices collection
      */
@@ -97,10 +128,6 @@ public class Repository {
         } else
             Log.e(TAG, error.toString());
     };
-    /**
-     * The Remote list mutable live data.
-     */
-    MutableLiveData<List<Remote>> remoteListMutableLiveData;
     /**
      * The Device mutable live data.
      */
@@ -135,31 +162,10 @@ public class Repository {
      */
     Remote.RemoteLearnListener remoteLearnListener;
     /**
-     * listener single remote
+     * The Device list mutable live data.
      */
-    private final EventListener<DocumentSnapshot> remoteSnapshotListener = (doc, error) -> {
-        if (doc != null) {
-            String learningState = doc.getString("state");
-            Log.d(TAG, "state: " + learningState);
-            switch (learningState) {
-                case "start":
-                    remoteLearnListener.onEvent(Remote.Event.LEARN_START);
-                    break;
-                case "gotCode":
-                    remoteLearnListener.onEvent(Remote.Event.LEARN_REMOTE_RECEIVED_COMMAND);
-                    break;
-                case "tested":
-                    remoteLearnListener.onEvent(Remote.Event.LEARN_REMOTE_TESTED_COMMAND);
-                    break;
-                case "":
-                    if (!isListenStart)
-                        remoteLearnListener.onEvent(Remote.Event.LEARN_END);
-                    isListenStart = false;
-                    break;
-            }
-        } else
-            Log.e(TAG, error.toString());
-    };
+    MutableLiveData<List<Device>> deviceListMutableLiveData;
+
 
     /**
      * singleton getter
@@ -176,12 +182,11 @@ public class Repository {
         commandsCollection = db.collection("commands");
 
         //getting functions instance
-        FirebaseFunctions functions = FirebaseFunctions.getInstance("europe-west1");
-        sendCommandFuncRef = functions.getHttpsCallable("sendCommand");
+        functions = FirebaseFunctions.getInstance("europe-west1");
 
         //setting snapshot listeners bound to activity lifecycle
-        deviceCollectionReg = deviceCollection.addSnapshotListener(activity, deviceCollectionSnapshotListener);
-        remoteCollectionReg = remoteCollection.addSnapshotListener(activity, remoteCollectionSnapshotListener);
+        deviceCollection.addSnapshotListener(activity, deviceCollectionSnapshotListener);
+        remoteCollection.addSnapshotListener(activity, remoteCollectionSnapshotListener);
 
         //Init live data
         deviceListMutableLiveData = new MutableLiveData<>();
@@ -251,22 +256,6 @@ public class Repository {
     }
 
     /**
-     * listener to remotes collection
-     */
-    private final EventListener<QuerySnapshot> remoteCollectionSnapshotListener = (value, error) -> {
-        if (value != null) {
-            List<Remote> remoteList = new ArrayList<>();
-            for (QueryDocumentSnapshot doc : value) {
-                if (doc != null) {
-                    remoteList.add(new Remote(doc.getId(), doc.getBoolean("isOnline")));
-                }
-            }
-            remoteListMutableLiveData.postValue(remoteList);
-        } else
-            Log.e(TAG, error.toString());
-    };
-
-    /**
      * start listening remote
      *
      * @param id                  remote id
@@ -274,7 +263,7 @@ public class Repository {
      */
     public void startListeningRemote(@NonNull String id, Remote.RemoteLearnListener remoteLearnListener) {
         this.remoteLearnListener = remoteLearnListener;
-        isListenStart = true;
+        isListenStart = false;
         remoteReg = remoteCollection.document(id).addSnapshotListener(remoteSnapshotListener);
     }
 
@@ -301,15 +290,14 @@ public class Repository {
     }
 
     /**
-     * edits devices fields (excluding commands)
+     * edit device
      *
-     * @param map with device fields, can be the same.
-     * @param uId UID of document in Firestore
+     * @param map with device fields
      */
-    public void editDevice(@NonNull Map map, @NonNull String uId) {
+    public void editDevice(@NonNull Map map) {
         if (!deviceExists(map))
-            deviceCollection.document(uId).set(map)
-                    .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot edited with ID: " + uId))
+            deviceDoc.set(map)
+                    .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot edited"))
                     .addOnFailureListener(e -> Log.w(TAG, "Error editing document", e));
         else
             Toast.makeText(activity, R.string.device_exists, Toast.LENGTH_LONG).show();
@@ -318,14 +306,17 @@ public class Repository {
     /**
      * delete a device
      *
-     * @param id       UID of document in Firestore
-     * @param commands the commands
+     * @param commands the commands map of device
      */
-    public void deleteDevice(@NonNull String id, @NonNull Map<String, String> commands) {
+    public void deleteDevice(@NonNull Map<String, String> commands) {
         //deleting all commands created by device.
         commands.values().forEach(commandId -> commandsCollection.document(commandId).delete());
         //deleting device
-        deviceCollection.document(id).delete();
+        deviceDoc.delete();
+        //also deleting device from deviceListMutableLiveData
+        List<Device> deviceList = deviceListMutableLiveData.getValue();
+        deviceList.removeIf(device -> device.getId() == deviceDoc.getId());
+        deviceListMutableLiveData.setValue(deviceList);
     }
 
     /**
@@ -379,22 +370,24 @@ public class Repository {
      * @param obj JSON object with request
      */
     public void sendCommand(JSONObject obj) {
-        sendCommandFuncRef.call(obj)
+        functions.getHttpsCallable("sendCommand").call(obj)
                 .addOnFailureListener(e -> {    //on fail start learn
                     Log.e(TAG, "sendCommand: " + e.toString());
                     e.printStackTrace();
-                    remoteLearnListener.onEvent(Remote.Event.LEARN_END);
+                    if (remoteLearnListener != null)
+                        remoteLearnListener.onEvent(Remote.Event.LEARN_END);
                 });
     }
 
     /**
      * delete command document and reference in device
      *
-     * @param commandId the command id
+     * @param commandId   the command id
+     * @param commandName the command name
      */
-    public void deleteCommand(String commandId, String commandName, @NonNull String deviceId) {
+    public void deleteCommand(String commandId, String commandName) {
         //deleting map field in device
-        deviceCollection.document(deviceId).update("commands." + commandName, FieldValue.delete());
+        deviceDoc.update("commands." + commandName, FieldValue.delete());
         //deleting command document
         commandsCollection.document(commandId).delete();
     }

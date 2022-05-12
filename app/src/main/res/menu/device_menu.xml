@@ -9,5 +9,7 @@
         android:title="" />
     <item
         android:id="@+id/deviceDelete"
-        android:title="Delete" />
+        android:icon="@drawable/ic_baseline_delete_forever_24"
+        android:title=""
+        app:showAsAction="ifRoom|withText" />
 </menu>

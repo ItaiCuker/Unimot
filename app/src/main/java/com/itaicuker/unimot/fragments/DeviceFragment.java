@@ -176,13 +176,16 @@ public class DeviceFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.deviceEdit) { //user pressed edit button
+        //user pressed edit button
+        if (item.getItemId() == R.id.deviceEdit) {
             //navigating to modify Device dialog
             Bundle args = new Bundle();
             args.putString("config", "Edit");
             args.putSerializable("device", device);
             navController.navigate(R.id.action_deviceFragment_to_ModifyDeviceDialogFragment, args);
-        } else if (item.getItemId() == R.id.deviceDelete) { //user pressed delete button
+        }
+        //user pressed delete button
+        else if (item.getItemId() == R.id.deviceDelete) {
             //creating alert dialog to warn user of deletion
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
             builder

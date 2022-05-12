@@ -47,7 +47,6 @@ public class LearnCommandDialogFragment extends DialogFragment {
     /**
      * The Dialog.
      */
-    @Nullable
     AlertDialog dialog;
 
     /**
@@ -126,7 +125,6 @@ public class LearnCommandDialogFragment extends DialogFragment {
     /**
      * The Device.
      */
-    @Nullable
     Device device;
     /**
      * The Btn create.
